@@ -1,0 +1,142 @@
+/* index.css */
+:root {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden; 
+  color: #ffffff;
+}
+
+/* Full-width container */
+.landing-page {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+/* Navigation bar - now full width with centered content */
+.navigation {
+  width: 100%;
+  background-color: #0f0f0f;
+  border-bottom: 1px solid #333;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  width: 100%;
+}
+
+.nav-links span {
+  cursor: pointer;
+  font-weight: 500;
+  color: #888;
+}
+
+.nav-links .active {
+  color: white;
+  font-weight: bold;
+}
+
+.nav-links .logo {
+  margin-left: auto;
+  color: #f00;
+  font-weight: bold;
+}
+
+/* Hero section - full width background */
+.hero-section {
+  width: 100%;
+  position: relative;
+  padding: 4rem 0;
+}
+
+.hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.badge {
+  background-color: #f00;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.hero-section h1 {
+  font-size: 3.5rem;
+  margin: 0;
+  line-height: 1.1;
+  background: linear-gradient(90deg, #ff0000, #ff4500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 1rem;
+}
+
+.description {
+  max-width: 600px;
+  margin: 2rem 0;
+  color: #aaa;
+  line-height: 1.6;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.primary-button {
+  background-color: #f00;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.primary-button:hover {
+  background-color: #d00;
+}
+
+.secondary-button {
+  background-color: transparent;
+  color: white;
+  border: 1px solid #666;
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.secondary-button:hover {
+  border-color: #999;
+}
