@@ -23,7 +23,7 @@ import {
 } from 'react-feather';
 
 // Import feed components
-import HomeFeed from '../components/Sections/Feeds-Content/HomeFeeds';
+import HomeFeed from "../Components/Sections/Feeds-Content/HomeFeeds";
 import NotificationsFeed from '../components/Sections/Feeds-Content/NotificationsFeed';
 import MessagesFeed from '../components/Sections/Feeds-Content/MessagesFeed';
 import CollectionsFeed from '../components/Sections/Feeds-Content/CollectionsFeed';
