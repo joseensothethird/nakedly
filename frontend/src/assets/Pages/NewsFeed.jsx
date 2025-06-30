@@ -24,7 +24,7 @@ import {
 
 // Import feed components
 import HomeFeed from "../Components/Sections/Feeds-Content/HomeFeeds";
-import NotificationsFeed from '../components/Sections/Feeds-Content/NotificationsFeed';
+import NotificationsFeed from "../components/Sections/Feeds-Content/notificationsfeed";
 import MessagesFeed from '../components/Sections/Feeds-Content/MessagesFeed';
 import CollectionsFeed from '../components/Sections/Feeds-Content/CollectionsFeed';
 import SubscriptionsFeed from '../components/Sections/Feeds-Content/SubscriptionsFeed';
