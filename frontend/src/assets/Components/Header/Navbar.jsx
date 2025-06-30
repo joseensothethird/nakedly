@@ -41,7 +41,7 @@ const Navbar = () => {
           Feed
         </NavItem>
         <NavItem
-          to="/models"
+          to="/creator"
           active={activeItem === 'models' ? 1 : 0}
           onClick={() => setActiveItem('models')}
         >
@@ -72,7 +72,7 @@ const Navbar = () => {
           Feed
         </NavItem>
         <NavItem
-          to="/models"
+          to="/creator"
           active={activeItem === 'models' ? 1 : 0}
           onClick={() => handleNavClick('models')}
         >

@@ -44,6 +44,8 @@ const AddCardFeed = lazyWithLoading(() => import('./assets/Components/Sections/F
 const ProfileFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/ProfileFeed'));
 const SettingsFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/SettingsFeed'));
 
+const Creator = lazyWithLoading(() => import('./assets/Components/Sections/Channel_Card.jsx'));
+
 const FloatingChatbot = lazyWithLoading(() => import('./assets/Components/ChatBot/Chatbot.jsx'));
 
 function App() {
@@ -84,7 +86,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
 
-          
+           {/* Channel Cards */}
+            <Route path="/creator" element={<Creator />} />
           {/* Feeds */}
           <Route path="/nakedly" element={<NewsFeed />}>
             <Route index element={<HomeFeed />} />

@@ -25,12 +25,12 @@ import {
 // Import feed components
 import HomeFeed from "../Components/Sections/Feeds-Content/HomeFeeds";
 import NotificationsFeed from "../Components/Sections/Feeds-Content/NotificationsFeed";
-import MessagesFeed from '../Components/Sections/Feeds-Content/MessagesFeed';
-import CollectionsFeed from '../Components/Sections/Feeds-Content/CollectionsFeed';
-import SubscriptionsFeed from '../Components/Sections/Feeds-Content/SubscriptionsFeed';
-import AddCardFeed from '../Components/Sections/Feeds-Content/Add_Card';
-import ProfileFeed from '../Components/Sections/Feeds-Content/ProfileFeed';
-import SettingsFeed from '../Components/Sections/Feeds-Content/SettingsFeed';
+import MessagesFeed from "../Components/Sections/Feeds-Content/MessagesFeed";
+import CollectionsFeed from "../Components/Sections/Feeds-Content/CollectionsFeed";
+import SubscriptionsFeed from "../Components/Sections/Feeds-Content/SubscriptionsFeed";
+import AddCardFeed from "../Components/Sections/Feeds-Content/Add_Card";
+import ProfileFeed from "../Components/Sections/Feeds-Content/ProfileFeed";
+import SettingsFeed from "../Components/Sections/Feeds-Content/SettingsFeed";
 
 
 // Import styled components

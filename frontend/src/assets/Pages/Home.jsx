@@ -11,9 +11,9 @@ const LandingPage = styled.div`
 const Home = () => {
   return (
     <LandingPage>
-      <Banner />
-      <Feedback />
+      <Banner /> 
       <ChannelCard />
+      <Feedback />
       <AboutUs />
     </LandingPage>
   )

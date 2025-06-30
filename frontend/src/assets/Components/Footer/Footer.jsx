@@ -41,7 +41,7 @@ const Footer = () => {
           <div style={footerStyles.linkColumn}>
             <h4 style={footerStyles.columnTitle}>Navigation</h4>
             <ul style={footerStyles.linkList}>
-              {['feeds', 'models', 'channels'].map((item) => (
+              {['feeds', 'models', 'creator'].map((item) => (
                 <li key={item} style={footerStyles.linkItem}>
                   <a
                     href={`/${item}`}
