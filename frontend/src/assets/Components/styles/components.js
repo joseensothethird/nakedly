@@ -252,7 +252,28 @@ export const mobileStyles = {
     gap: '40px'
   }
 };
+export const MobileNavItem = styled(NavItem)`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+`;
 
+export const MobileNavIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+`;
+
+export const MobileNavText = styled.span`
+  font-size: 0.95rem;
+  margin-left: 10px;
+`;
+export const MobileNavItemText = styled.span`
+  font-size: 0.95rem;
+  margin-left: 10px;
+`;
 /*Chatbot*/
 
 export const ChatbotContainer = styled.div`

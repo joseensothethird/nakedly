@@ -1,29 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import {
-  ChatbotContainer,
-  ChatMessage,
-  ChatButton,
-  ChatWindow,
-  ChatHeader,
-  ChatLogo,
-  ChatTitle,
-  CloseButton,
-  ChatBody,
-  ChatFooter,
-  MessageInput,
-  SendButton,
-  SearchContainer,
-  ChatSearchInput,
-  ChatCategories,
-  CategoryButton,
-  ChatList,
-  ChatItem,
-  ChatAvatar,
-  ChatInfo,
-  ChatName,
-  ChatPreview
-} from "../styles/components";
+
+// Remove 'Message' from this import - it doesn't exist in your styles file
+import { ChatbotContainer, ChatMessage, ChatButton, ChatWindow, ChatHeader, ChatLogo, ChatTitle, CloseButton, ChatBody, ChatFooter, MessageInput, SendButton, SearchContainer, ChatSearchInput, ChatCategories, CategoryButton, ChatList, ChatItem, ChatAvatar, ChatInfo, ChatName, ChatPreview } from "../styles/components";
 
 const FloatingChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -123,7 +102,7 @@ const FloatingChatbot = () => {
 
   return (
     <ChatbotContainer className="chatbot-container">
-      <ChatWindow $open={isOpen}>
+      <ChatWindow open={isOpen}>
         <ChatHeader>
           {activeView === "messages" && (
             <CloseButton
@@ -164,19 +143,19 @@ const FloatingChatbot = () => {
 
             <ChatCategories>
               <CategoryButton
-                $active={activeCategory === "all"}
+                active={activeCategory === "all"}
                 onClick={() => setActiveCategory("all")}
               >
                 All
               </CategoryButton>
               <CategoryButton
-                $active={activeCategory === "support"}
+                active={activeCategory === "support"}
                 onClick={() => setActiveCategory("support")}
               >
                 Spam
               </CategoryButton>
               <CategoryButton
-                $active={activeCategory === "sales"}
+                active={activeCategory === "sales"}
                 onClick={() => setActiveCategory("sales")}
               >
                 Message Request
@@ -216,7 +195,7 @@ const FloatingChatbot = () => {
           <>
             <ChatBody>
               {messages.map((message, index) => (
-                <ChatMessage key={index} $isUser={message.isUser}>
+                <ChatMessage key={index} isUser={message.isUser}>
                   {message.text}
                 </ChatMessage>
               ))}
@@ -263,4 +242,4 @@ const FloatingChatbot = () => {
   );
 };
 
-export default FloatingChatbot;                                                      
+export default FloatingChatbot;

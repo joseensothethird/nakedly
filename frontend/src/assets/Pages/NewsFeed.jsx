@@ -15,10 +15,7 @@ import {
   User, 
   MoreHorizontal,
   Plus,
-  Search,
   MoreVertical,
-  X,
-  Menu,
   Settings
 } from 'react-feather';
 
@@ -32,6 +29,8 @@ import AddCardFeed from "../Components/Sections/Feeds-Content/Add_Card";
 import ProfileFeed from "../Components/Sections/Feeds-Content/ProfileFeed";
 import SettingsFeed from "../Components/Sections/Feeds-Content/SettingsFeed";
 
+// Import RightSidebar component
+import RightSidebarComponent from '../Components/Sections/Feeds-Content/RightSidebar';
 
 // Import styled components
 import { 
@@ -42,31 +41,14 @@ import {
   NavItem, 
   NewPostButton, 
   MainFeedContainer, 
-  FeedHeader, 
   RightSidebar, 
-  SearchContainer, 
-  SearchInput, 
-  SearchIcon, 
-  SuggestionsHeader, 
-  UserSuggestion, 
-  UserAvatar, 
-  UserDetailsContainer, 
-  SuggestionUserName, 
-  UserHandle, 
-  FollowButton, 
-  AppFooter, 
-  FooterLink,
-  MobileHeader,
-  MobileMenuButton,
-  MobileSidebarOverlay,
-  MobileLeftSidebar
+  MobileNavItemText
 } from '../Components/styles/pages/feeds';
 
 const SocialMediaApp = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(false);
-  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
   // Determine active tab from URL
   const getActiveTabFromPath = () => {
@@ -75,7 +57,7 @@ const SocialMediaApp = () => {
     if (path.startsWith('/nakedly/messages')) return 'Messages';
     if (path.startsWith('/nakedly/collections')) return 'Collections';
     if (path.startsWith('/nakedly/subscriptions')) return 'Subscriptions';
-    if (path.startsWith('/nakedly/add-card')) return 'Add card';
+    if (path.startsWith('/nakedly/card')) return 'Card'; // Changed from 'card' to 'Card' to match the NavItem
     if (path.startsWith('/nakedly/profile')) return 'My profile';
     if (path.startsWith('/nakedly/settings')) return 'Settings';
     return 'Home'; // Default to home
@@ -103,28 +85,8 @@ const SocialMediaApp = () => {
     setActiveTab(getActiveTabFromPath());
   }, [location.pathname]);
 
-  const suggestions = [
-    {
-      id: 1,
-      name: "Princess Tina",
-      username: "@princesstina",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
-      badge: "Free"
-    },
-    {
-      id: 2,
-      name: "Devon Moore",
-      username: "@devon.moore",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
-      badge: "Free"
-    }
-  ];
-
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    if (isMobile) {
-      setShowMobileSidebar(false);
-    }
     
     // Navigate to the corresponding route
     switch(tab) {
@@ -143,8 +105,8 @@ const SocialMediaApp = () => {
       case 'Subscriptions':
         navigate('/nakedly/subscriptions');
         break;
-      case 'Add card':
-        navigate('/nakedly/add-card');
+      case 'Card': // Changed from 'Add card' to 'Card' to match the NavItem
+        navigate('/nakedly/card');
         break;
       case 'My profile':
         navigate('/nakedly/profile');
@@ -159,7 +121,7 @@ const SocialMediaApp = () => {
 
   return (
     <AppContainer>
-      {/* Left Sidebar - Desktop */}
+      {/* Left Sidebar - Desktop (hidden on mobile) */}
       {!isMobile && (
         <LeftSidebar>
           <Logo>
@@ -187,7 +149,7 @@ const SocialMediaApp = () => {
               <Users size={20} />
               <span>Subscriptions</span>
             </NavItem>
-            <NavItem active={activeTab === 'Add card'} onClick={() => handleTabChange('Add card')}>
+            <NavItem active={activeTab === 'Card'} onClick={() => handleTabChange('Card')}> {/* Changed from 'Add card' to 'Card' */}
               <CreditCard size={20} />
               <span>Add card</span>
             </NavItem>
@@ -208,143 +170,25 @@ const SocialMediaApp = () => {
         </LeftSidebar>
       )}
 
-      {/* Mobile Header */}
-      {isMobile && (
-        <MobileHeader>
-          <MobileMenuButton onClick={() => setShowMobileSidebar(!showMobileSidebar)}>
-            {showMobileSidebar ? <X size={24} /> : <Menu size={24} />}
-          </MobileMenuButton>
-          <h1>{activeTab.toUpperCase()}</h1>
-          <div style={{width: '24px'}}></div> {/* Spacer for alignment */}
-        </MobileHeader>
-      )}
-
-      {/* Mobile Sidebar Overlay */}
-      {isMobile && showMobileSidebar && (
-        <MobileSidebarOverlay onClick={() => setShowMobileSidebar(false)}>
-          <MobileLeftSidebar onClick={(e) => e.stopPropagation()}>
-            <Logo>
-              <img style={{height:'32px'}} src="/logo/nakedly.png" alt="Logo" />
-            </Logo>
-            
-            <Nav>
-              <NavItem active={activeTab === 'Home'} onClick={() => handleTabChange('Home')}>
-                <Home size={20} />
-                <span>Home</span>
-              </NavItem>
-              <NavItem active={activeTab === 'Notifications'} onClick={() => handleTabChange('Notifications')}>
-                <Bell size={20} />
-                <span>Notifications</span>
-              </NavItem>
-              <NavItem active={activeTab === 'Messages'} onClick={() => handleTabChange('Messages')}>
-                <MessageCircle size={20} />
-                <span>Messages</span>
-              </NavItem>
-              <NavItem active={activeTab === 'Collections'} onClick={() => handleTabChange('Collections')}>
-                <Bookmark size={20} />
-                <span>Collections</span>
-              </NavItem>
-              <NavItem active={activeTab === 'Subscriptions'} onClick={() => handleTabChange('Subscriptions')}>
-                <Users size={20} />
-                <span>Subscriptions</span>
-              </NavItem>
-              <NavItem active={activeTab === 'Add card'} onClick={() => handleTabChange('Add card')}>
-                <CreditCard size={20} />
-                <span>Add card</span>
-              </NavItem>
-              <NavItem active={activeTab === 'My profile'} onClick={() => handleTabChange('My profile')}>
-                <User size={20} />
-                <span>My profile</span>
-              </NavItem>
-              <NavItem active={activeTab === 'Settings'} onClick={() => handleTabChange('Settings')}>
-                <Settings size={20} />
-                <span>Settings</span>
-              </NavItem>
-            </Nav>
-            
-            <NewPostButton>
-              <Plus size={20} />
-              <span>NEW POST</span>
-            </NewPostButton>
-          </MobileLeftSidebar>
-        </MobileSidebarOverlay>
-      )}                                               
-
       {/* Main Feed */}
       <MainFeedContainer>
-        {!isMobile && (
-          <FeedHeader>
-            <h1>{activeTab.toUpperCase()}</h1>
-            <MoreVertical size={20} />
-          </FeedHeader>
-        )}
-        
         <Routes>
           <Route path="/" element={<HomeFeed />} />
           <Route path="/notifications" element={<NotificationsFeed />} />
           <Route path="/messages" element={<MessagesFeed />} />
           <Route path="/collections" element={<CollectionsFeed />} />
           <Route path="/subscriptions" element={<SubscriptionsFeed />} />
-          <Route path="/add-card" element={<AddCardFeed />} />
+          <Route path="/card" element={<AddCardFeed />} />
           <Route path="/profile" element={<ProfileFeed />} />
           <Route path="/settings" element={<SettingsFeed />} />
         </Routes>
       </MainFeedContainer>
 
-      {/* Right Sidebar - Desktop */}
+      {/* Right Sidebar - Desktop (hidden on mobile) */}
       {!isMobile && (
         <RightSidebar>
-          <SearchContainer>
-            <SearchInput placeholder="Search posts" />
-            <SearchIcon size={18} />
-          </SearchContainer>
-
-          <SuggestionsHeader>
-            <h2>SUGGESTIONS</h2>
-            <MoreHorizontal size={16} />
-          </SuggestionsHeader>
-
-          {suggestions.map(user => (
-            <UserSuggestion key={user.id}>
-              <UserAvatar src={user.avatar} alt={user.name} />
-              <UserDetailsContainer>
-                <SuggestionUserName>{user.name}</SuggestionUserName>
-                <UserHandle>{user.username}</UserHandle>
-              </UserDetailsContainer>
-              <FollowButton>Follow</FollowButton>
-            </UserSuggestion>
-          ))}
-
-          <AppFooter>
-            <FooterLink>Privacy</FooterLink>
-            <FooterLink>Cookie Notice</FooterLink>
-            <FooterLink>Terms of Service</FooterLink>
-          </AppFooter>
+          <RightSidebarComponent />
         </RightSidebar>
-      )}
-
-      {/* Mobile Bottom Navigation */}
-      {isMobile && (
-        <LeftSidebar as="footer">
-          <Nav>
-            <NavItem active={activeTab === 'Home'} onClick={() => handleTabChange('Home')}>
-              <Home size={20} />
-              <span>Home</span>
-            </NavItem>
-            <NavItem active={activeTab === 'Notifications'} onClick={() => handleTabChange('Notifications')}>
-              <Bell size={20} />
-              <span>Notifications</span>
-            </NavItem>
-            <NavItem active={activeTab === 'Messages'} onClick={() => handleTabChange('Messages')}>
-              <MessageCircle size={20} />
-              <span>Messages</span>
-            </NavItem>
-            <NavItem active={activeTab === 'My profile'} onClick={() => handleTabChange('My profile')}>
-              <User size={20} />
-              <span>Profile</span>
-            </NavItem>
-          </Nav>
-        </LeftSidebar>
       )}
     </AppContainer>
   );

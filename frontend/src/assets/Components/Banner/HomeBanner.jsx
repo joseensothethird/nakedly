@@ -187,6 +187,7 @@ const ModelName = styled.h1`
   margin: 0;
   line-height: 1;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  color:white;
 
   @media (max-width: 480px) {
     font-size: clamp(1.8rem, 8vw, 3rem);

@@ -40,7 +40,7 @@ const NotificationsFeed = lazyWithLoading(() => import('./assets/Components/Sect
 const MessagesFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/MessagesFeed'));
 const CollectionsFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/CollectionsFeed'));
 const SubscriptionsFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/SubscriptionsFeed'));
-const AddCardFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/Add_Card'));
+const AddCardFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/Add_Card.jsx'));
 const ProfileFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/ProfileFeed'));
 const SettingsFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/SettingsFeed'));
 
@@ -89,16 +89,16 @@ function App() {
            {/* Channel Cards */}
             <Route path="/creator" element={<Creator />} />
           {/* Feeds */}
-          <Route path="/nakedly" element={<NewsFeed />}>
-            <Route index element={<HomeFeed />} />
-            <Route path="notifications" element={<NotificationsFeed />} />
-            <Route path="messages" element={<MessagesFeed />} />
-            <Route path="collections" element={<CollectionsFeed />} />
-            <Route path="subscriptions" element={<SubscriptionsFeed />} />
-            <Route path="add-card" element={<AddCardFeed />} />
-            <Route path="profile" element={<ProfileFeed />} />
-            <Route path="settings" element={<SettingsFeed />} />
-          </Route>
+    <Route path="/nakedly" element={<NewsFeed />}>
+  <Route index element={<HomeFeed />} />
+  <Route path="notifications" element={<NotificationsFeed />} />
+  <Route path="messages" element={<MessagesFeed />} />
+  <Route path="collections" element={<CollectionsFeed />} />
+  <Route path="subscriptions" element={<SubscriptionsFeed />} />
+  <Route path="card" element={<AddCardFeed />} />
+  <Route path="profile" element={<ProfileFeed />} />
+  <Route path="settings" element={<SettingsFeed />} />
+</Route>
         </Routes>
       </Suspense>
       

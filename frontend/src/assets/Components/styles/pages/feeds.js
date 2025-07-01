@@ -37,11 +37,7 @@ export const AppContainer = styled.div`
   }
 
   @media (max-width: ${breakpoints.medium}) {
-    grid-template-columns: 60px 1fr;
-  }
-
-  @media (max-width: ${breakpoints.small}) {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; // Changed from 60px 1fr to just 1fr
   }
 `;
 
@@ -63,32 +59,6 @@ export const LeftSidebar = styled.div`
   @media (max-width: ${breakpoints.medium}) {
     padding: 8px;
   }
-
-  @media (max-width: ${breakpoints.small}) {
-    position: fixed;
-    bottom: 0;
-    top: auto;
-    height: auto;
-    width: 100%;
-    flex-direction: row;
-    padding: 8px;
-    border-top: 1px solid #e9ecef;
-    border-right: none;
-  }
-`;
-
-export const MobileLeftSidebar = styled.div`
-  background-color: white;
-  width: 280px;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  z-index: 1001;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 `;
 
 export const Logo = styled.div`
@@ -115,11 +85,6 @@ export const Logo = styled.div`
   @media (max-width: ${breakpoints.medium}) {
     margin-bottom: 15px;
   }
-
-  @media (max-width: ${breakpoints.small}) {
-    display: block;
-    margin-bottom: 20px;
-  }
 `;
 
 export const Nav = styled.nav`
@@ -127,12 +92,6 @@ export const Nav = styled.nav`
   flex-direction: column;
   gap: 8px;
   flex: 1;
-
-  @media (max-width: ${breakpoints.small}) {
-    flex-direction: row;
-    justify-content: space-around;
-    flex: none;
-  }
 `;
 
 export const NavItem = styled.div`
@@ -158,17 +117,11 @@ export const NavItem = styled.div`
     @media (max-width: ${breakpoints.large}) {
       display: none;
     }
-
-    @media (max-width: ${breakpoints.small}) {
-      display: ${props => props.mobileSidebar ? 'inline' : 'none'};
-    }
   }
 
-  @media (max-width: ${breakpoints.small}) {
+  @media (max-width: ${breakpoints.medium}) {
     padding: 8px;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 12px;
+    justify-content: center;
   }
 `;
 
@@ -196,16 +149,11 @@ export const NewPostButton = styled.button`
     }
   }
 
-  @media (max-width: ${breakpoints.small}) {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
+  @media (max-width: ${breakpoints.medium}) {
+    padding: 8px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    padding: 0;
-    margin: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 `;
 
@@ -216,17 +164,12 @@ export const MainFeedContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: auto;
-
+  width: auto;
+ 
+  
   @media (max-width: ${breakpoints.large}) {
-    min-width: auto;
-  }
-
-  @media (max-width: ${breakpoints.medium}) {
-    border-right: none;
-  }
-
-  @media (max-width: ${breakpoints.small}) {
-    margin-bottom: 60px;
+    min-width: auto; 
+    padding: 5%;
   }
 `;
 
@@ -236,34 +179,11 @@ export const ScrollableFeed = styled.div`
   padding-bottom: 20px;
 `;
 
-export const FeedHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #e9ecef;
-  background-color: white;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  
-  h1 {
-    font-size: 18px;
-    font-weight: 700;
-  }
 
-  @media (max-width: ${breakpoints.small}) {
-    padding: 12px;
-  }
-`;
 
 export const Post = styled.div`
   padding: 16px;
   border-bottom: 1px solid #e9ecef;
-
-  @media (max-width: ${breakpoints.small}) {
-    padding: 12px;
-  }
 `;
 
 export const PostHeader = styled.div`
@@ -284,11 +204,6 @@ export const Avatar = styled.div`
   justify-content: center;
   font-weight: bold;
   flex-shrink: 0;
-
-  @media (max-width: ${breakpoints.small}) {
-    width: 36px;
-    height: 36px;
-  }
 `;
 
 export const UserInfo = styled.div`
@@ -311,12 +226,9 @@ export const UserName = styled.div`
     flex-shrink: 0;
   }
 `;
-export const SuggestionUserName = styled.div`
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
+
+
+
 export const UserDetails = styled.div`
   font-size: 14px;
   color: #6c757d;
@@ -353,10 +265,6 @@ export const PostImage = styled.div`
   border-radius: 8px;
   margin-bottom: 16px;
   position: relative;
-
-  @media (max-width: ${breakpoints.small}) {
-    height: 200px;
-  }
 `;
 
 export const LocationBadge = styled.div`
@@ -369,12 +277,6 @@ export const LocationBadge = styled.div`
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-
-  @media (max-width: ${breakpoints.small}) {
-    top: 8px;
-    left: 8px;
-    font-size: 10px;
-  }
 `;
 
 export const LiveIndicator = styled.div`
@@ -386,11 +288,6 @@ export const LiveIndicator = styled.div`
   background-color: #ef4444;
   border-radius: 50%;
   border: 2px solid white;
-
-  @media (max-width: ${breakpoints.small}) {
-    bottom: 8px;
-    left: 8px;
-  }
 `;
 
 export const PostActions = styled.div`
@@ -398,10 +295,6 @@ export const PostActions = styled.div`
   gap: 24px;
   padding-top: 12px;
   border-top: 1px solid #e9ecef;
-
-  @media (max-width: ${breakpoints.small}) {
-    gap: 12px;
-  }
 `;
 
 export const ActionButton = styled.button`
@@ -417,11 +310,6 @@ export const ActionButton = styled.button`
   &:hover {
     color: #3b82f6;
   }
-
-  @media (max-width: ${breakpoints.small}) {
-    font-size: 12px;
-    gap: 4px;
-  }
 `;
 
 export const RightSidebar = styled.div`
@@ -436,7 +324,160 @@ export const RightSidebar = styled.div`
     display: none;
   }
 `;
+export const MobileNavItemText = styled.span`
+  font-size: 0.95rem;
+  margin-left: 10px;
+`;
+/*Right Sidebar*/
 
+// Right Sidebar Styles
+export const RightSidebarContainer = styled.div`
+  width: 100%;
+  max-width: 350px;
+  padding: 16px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+
+  @media (max-width: 1200px) {
+    max-width: 300px;
+  }
+
+  @media (max-width: 992px) {
+    display: none;
+  }
+`;
+
+export const SectionContainer = styled.div`
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+`;
+
+export const SectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #495057;
+    margin: 0;
+  }
+`;
+export const SuggestionsHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #495057;
+    margin: 0;
+    text-transform: uppercase;
+  }
+`;
+export const ChannelCard = styled.div`
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f3f5;
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+`;
+
+export const ChannelHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+`;
+
+export const ChannelAvatar = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
+export const ChannelInfo = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+export const ChannelName = styled.div`
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+export const ChannelHandle = styled.div`
+  font-size: 13px;
+  color: #6c757d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+export const JoinButton = styled.button`
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+  
+  &:hover {
+    background-color: #e9ecef;
+  }
+`;
+
+export const PhotoCollage = styled.div`
+  display: flex;
+  position: relative;
+  height: 80px;
+  margin: 12px 0;
+`;
+
+export const CollageImage = styled.img`
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  position: absolute;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  &:nth-child(1) {
+    left: 0;
+  }
+  &:nth-child(2) {
+    left: 20px;
+  }
+  &:nth-child(3) {
+    left: 40px;
+  }
+`;
+
+export const ChannelMembers = styled.div`
+  font-size: 13px;
+  color: #6c757d;
+`;
+
+// Reused styles from your original component
 export const SearchContainer = styled.div`
   position: relative;
   margin-bottom: 24px;
@@ -464,18 +505,6 @@ export const SearchIcon = styled(Search)`
   color: #6c757d;
 `;
 
-export const SuggestionsHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  
-  h2 {
-    font-size: 16px;
-    font-weight: 700;
-  }
-`;
-
 export const UserSuggestion = styled.div`
   display: flex;
   align-items: center;
@@ -493,6 +522,13 @@ export const UserAvatar = styled.img`
 export const UserDetailsContainer = styled.div`
   flex: 1;
   min-width: 0;
+`;
+
+export const SuggestionUserName = styled.div`
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const UserHandle = styled.div`
@@ -535,56 +571,8 @@ export const FooterLink = styled.a`
     text-decoration: underline;
   }
 `;
+/**/
 
-export const MobileHeader = styled.div`
-  display: none;
-  
-  @media (max-width: ${breakpoints.small}) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    background-color: white;
-    border-bottom: 1px solid #e9ecef;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    
-    h1 {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0;
-    }
-  }
-`;
-
-export const MobileMenuButton = styled.button`
-  display: none;
-  
-  @media (max-width: ${breakpoints.small}) {
-    display: block;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    color: #495057;
-  }
-`;
-
-export const MobileSidebarOverlay = styled.div`
-  display: none;
-  
-  @media (max-width: ${breakpoints.small}) {
-    display: ${props => props.show ? 'block' : 'none'};
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-  }
-`;
 
 /*2.Notifications*/
 
@@ -1367,6 +1355,7 @@ export const CollectionVideoThumbnail = styled.div`
   }
 `;
 /*6. Card*/
+
 export const PaymentContainer = styled.div`
   width: 100%;
   margin: 0 auto;
@@ -1443,7 +1432,7 @@ export const MethodDetails = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 0; /* Prevent overflow */
+  min-width: 0;
 `;
 
 export const MethodIcon = styled.div`
@@ -1462,7 +1451,7 @@ export const MethodIcon = styled.div`
 export const MethodInfo = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 0; /* Prevent text overflow */
+  min-width: 0;
 `;
 
 export const MethodName = styled.span`
@@ -1599,7 +1588,7 @@ export const TransactionIcon = styled.div`
 
 export const TransactionDetails = styled.div`
   flex: 1;
-  min-width: 0; /* Prevent overflow */
+  min-width: 0;
 `;
 
 export const TransactionName = styled.div`
@@ -1625,6 +1614,7 @@ export const TransactionAmount = styled.div`
   margin-left: 10px;
   white-space: nowrap;
 `;
+
 export const EmptyState = styled.div`
   display: flex;
   flex-direction: column;
@@ -1644,4 +1634,95 @@ export const EmptyStateText = styled.p`
   color: #6B7280;
   font-size: 16px;
   margin: 0;
+`;
+
+export const TransactionControls = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+export const CardSearchInput = styled.div`
+  display: flex;
+  align-items: center;
+  background: #F3F4F6;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 200px;
+
+  input {
+    border: none;
+    background: transparent;
+    margin-left: 8px;
+    width: 100%;
+    outline: none;
+  }
+`;
+
+export const FilterButton = styled.button`
+  background: #F3F4F6;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const ExportButton = styled.button`
+  background: #F3F4F6;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #E5E7EB;
+  }
+`;
+
+export const TransactionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+`;
+
+export const PaginationControls = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+`;
+
+export const PageButton = styled.button`
+  padding: 8px 12px;
+  border: 1px solid #E5E7EB;
+  background: ${props => props.active ? '#E5E7EB' : 'white'};
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 40px;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const TransactionTypeFilter = styled.div`
+  select {
+    padding: 8px 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    background: #F3F4F6;
+    cursor: pointer;
+  }
 `;

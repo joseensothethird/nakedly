@@ -6,7 +6,7 @@ const NakedlyLogo = '/logo/nakedly.png';
 // Responsive Container
 const Container = styled.div`
   max-width: 100%;
-  height:80vh;
+  max-height:auto;
   margin: 0 auto;
   background: linear-gradient(135deg, #87CEEB 0%, #1E90FF 100%);
   min-height: auto;
