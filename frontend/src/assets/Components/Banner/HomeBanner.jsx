@@ -12,7 +12,7 @@ const ModernModelBanner = ({
   isOnline = true,
   isVerified = true,
   subscribeLink = "/nakedly/profile",
-  messageLink = "/nakedly/profile",
+  messageLink = "/nakedly/messages",
   socialLinks = {
     instagram: "#",
     twitter: "#",

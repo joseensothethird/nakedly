@@ -328,7 +328,86 @@ export const MobileNavItemText = styled.span`
   font-size: 0.95rem;
   margin-left: 10px;
 `;
-/*Right Sidebar*/
+export const NewPostContainer = styled.div`
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
+  background-color: white;
+`;
+
+export const NewPostTextarea = styled.textarea`
+  width: 100%;
+  border: none;
+  resize: none;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  min-height: 80px;
+  margin-left: 12px;
+
+  &:focus {
+    outline: none;
+    background-color: white;
+    box-shadow: 0 0 0 2px #3b82f6;
+  }
+`;
+
+export const NewPostActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-left: 52px;
+`;
+
+export const NewPostActionButton = styled.button`
+  background: none;
+  border: none;
+  color: #3b82f6;
+  cursor: pointer;
+  margin-right: 12px;
+  padding: 4px;
+
+  &:hover {
+    color: #2563eb;
+  }
+`;
+
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+`;
+
+export const PaginationButton = styled.button`
+  padding: 8px 16px;
+  border: 1px solid #e9ecef;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  color: ${props => props.disabled ? '#adb5bd' : '#495057'};
+  pointer-events: ${props => props.disabled ? 'none' : 'auto'};
+
+  &:hover {
+    background-color: ${props => props.disabled ? 'white' : '#f8f9fa'};
+  }
+`;
+
+export const PaginationPageNumber = styled.button`
+  padding: 8px 12px;
+  border: 1px solid ${props => props.active ? '#3b82f6' : '#e9ecef'};
+  background-color: ${props => props.active ? '#f0f7ff' : 'white'};
+  border-radius: 4px;
+  cursor: pointer;
+  color: ${props => props.active ? '#3b82f6' : '#495057'};
+  font-weight: ${props => props.active ? '600' : 'normal'};
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+`;
 
 // Right Sidebar Styles
 export const RightSidebarContainer = styled.div`
@@ -1355,17 +1434,25 @@ export const CollectionVideoThumbnail = styled.div`
   }
 `;
 /*6. Card*/
-
 export const PaymentContainer = styled.div`
   width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
 `;
 
 export const PaymentHeader = styled.div`
   margin-bottom: 30px;
   width: 100%;
+
+  @media (max-width: 768px) {
+    margin-bottom: 20px;
+  }
 `;
 
 export const PaymentTitle = styled.h1`
@@ -1373,6 +1460,10 @@ export const PaymentTitle = styled.h1`
   font-weight: 600;
   color: #1F2937;
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 export const PaymentContent = styled.div`
@@ -1380,6 +1471,10 @@ export const PaymentContent = styled.div`
   flex-direction: column;
   gap: 30px;
   width: 100%;
+
+  @media (max-width: 768px) {
+    gap: 20px;
+  }
 `;
 
 export const PaymentSection = styled.section`
@@ -1389,6 +1484,10 @@ export const PaymentSection = styled.section`
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   width: 100%;
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
 `;
 
 export const SectionTitle = styled.h2`
@@ -1397,6 +1496,10 @@ export const SectionTitle = styled.h2`
   color: #1F2937;
   margin-bottom: 8px;
   margin-top: 0;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 export const SectionSubtitle = styled.p`
@@ -1404,6 +1507,11 @@ export const SectionSubtitle = styled.p`
   color: #6B7280;
   margin-bottom: 20px;
   margin-top: 0;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
 `;
 
 export const PaymentMethod = styled.div`
@@ -1426,6 +1534,10 @@ export const MethodCard = styled.div`
   &:hover {
     border-color: #9CA3AF;
   }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
 `;
 
 export const MethodDetails = styled.div`
@@ -1446,6 +1558,12 @@ export const MethodIcon = styled.div`
   justify-content: center;
   color: #4B5563;
   flex-shrink: 0;
+
+  @media (max-width: 480px) {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
 `;
 
 export const MethodInfo = styled.div`
@@ -1489,6 +1607,11 @@ export const AddMethodButton = styled.button`
     border-color: #9CA3AF;
     background: #F9FAFB;
   }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    font-size: 14px;
+  }
 `;
 
 export const EarningsSummary = styled.div`
@@ -1509,6 +1632,10 @@ export const EarningsCard = styled.div`
   padding: 20px;
   width: 100%;
   box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    padding: 16px;
+  }
 `;
 
 export const EarningsHeader = styled.div`
@@ -1529,12 +1656,20 @@ export const EarningsAmount = styled.div`
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
 `;
 
 export const EarningsLabel = styled.div`
   font-size: 14px;
   color: #6B7280;
   width: 100%;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
 `;
 
 export const EarningsBreakdown = styled.div`
@@ -1550,11 +1685,20 @@ export const BreakdownItem = styled.div`
   padding: 12px 0;
   border-bottom: 1px solid #E5E7EB;
   width: 100%;
+
+  @media (max-width: 480px) {
+    padding: 10px 0;
+  }
 `;
 
 export const BreakdownLabel = styled.span`
   color: #6B7280;
   white-space: nowrap;
+  font-size: 14px;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
 `;
 
 export const BreakdownValue = styled.span`
@@ -1564,6 +1708,11 @@ export const BreakdownValue = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   margin-left: 10px;
+  font-size: 14px;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
 `;
 
 export const TransactionHistory = styled.div`
@@ -1579,11 +1728,19 @@ export const TransactionItem = styled.div`
   padding: 12px 0;
   border-bottom: 1px solid #E5E7EB;
   width: 100%;
+
+  @media (max-width: 480px) {
+    padding: 10px 0;
+  }
 `;
 
 export const TransactionIcon = styled.div`
   margin-right: 16px;
   flex-shrink: 0;
+
+  @media (max-width: 480px) {
+    margin-right: 12px;
+  }
 `;
 
 export const TransactionDetails = styled.div`
@@ -1598,6 +1755,11 @@ export const TransactionName = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 14px;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
 `;
 
 export const TransactionDate = styled.div`
@@ -1606,6 +1768,10 @@ export const TransactionDate = styled.div`
   display: flex;
   align-items: center;
   white-space: nowrap;
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+  }
 `;
 
 export const TransactionAmount = styled.div`
@@ -1613,6 +1779,11 @@ export const TransactionAmount = styled.div`
   color: ${props => props.positive ? '#10B981' : '#EF4444'};
   margin-left: 10px;
   white-space: nowrap;
+  font-size: 14px;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
 `;
 
 export const EmptyState = styled.div`
@@ -1623,17 +1794,29 @@ export const EmptyState = styled.div`
   padding: 40px 20px;
   text-align: center;
   width: 100%;
+
+  @media (max-width: 480px) {
+    padding: 30px 15px;
+  }
 `;
 
 export const EmptyStateIcon = styled.div`
   margin-bottom: 16px;
   color: #9CA3AF;
+
+  @media (max-width: 480px) {
+    margin-bottom: 12px;
+  }
 `;
 
 export const EmptyStateText = styled.p`
   color: #6B7280;
   font-size: 16px;
   margin: 0;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
 `;
 
 export const TransactionControls = styled.div`
@@ -1641,6 +1824,12 @@ export const TransactionControls = styled.div`
   gap: 12px;
   align-items: center;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 8px;
+    margin-bottom: 15px;
+  }
 `;
 
 export const CardSearchInput = styled.div`
@@ -1657,6 +1846,18 @@ export const CardSearchInput = styled.div`
     margin-left: 8px;
     width: 100%;
     outline: none;
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    order: 1;
+  }
+
+  @media (max-width: 480px) {
+    input {
+      font-size: 13px;
+    }
   }
 `;
 
@@ -1669,6 +1870,12 @@ export const FilterButton = styled.button`
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 14px;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
 `;
 
 export const ExportButton = styled.button`
@@ -1681,9 +1888,15 @@ export const ExportButton = styled.button`
   align-items: center;
   gap: 6px;
   transition: all 0.2s;
+  font-size: 14px;
 
   &:hover {
     background: #E5E7EB;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+    padding: 6px 10px;
   }
 `;
 
@@ -1694,6 +1907,13 @@ export const TransactionHeader = styled.div`
   margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 15px;
+  }
 `;
 
 export const PaginationControls = styled.div`
@@ -1701,6 +1921,12 @@ export const PaginationControls = styled.div`
   justify-content: center;
   gap: 8px;
   margin-top: 20px;
+  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    gap: 6px;
+    margin-top: 15px;
+  }
 `;
 
 export const PageButton = styled.button`
@@ -1710,10 +1936,17 @@ export const PageButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   min-width: 40px;
+  font-size: 14px;
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px 10px;
+    min-width: 36px;
+    font-size: 13px;
   }
 `;
 
@@ -1724,5 +1957,11 @@ export const TransactionTypeFilter = styled.div`
     border-radius: 8px;
     background: #F3F4F6;
     cursor: pointer;
+    font-size: 14px;
+
+    @media (max-width: 480px) {
+      font-size: 13px;
+      padding: 6px 10px;
+    }
   }
 `;

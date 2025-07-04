@@ -31,6 +31,8 @@ const Model_Terms = lazyWithLoading(() => import('./assets/Pages/Information_Pag
 const Login = lazyWithLoading(() => import('./assets/Pages/Auth/Login'));
 const SignUp = lazyWithLoading(() => import('./assets/Pages/Auth/SignUp'));
 const RoleSelectionPage = lazyWithLoading(() => import('./assets/Pages/Auth/RoleSelection'));
+const AdminLogin = lazyWithLoading(() => import('./assets/Pages/AdminDashboard/adminlogin.jsx'));
+const AdminDashboard = lazyWithLoading(() => import('./assets/Pages/AdminDashboard/Dashboard.jsx'));
 
 const ContactUs = lazyWithLoading(() => import('./assets/Pages/Information_Pages/ContactUs.jsx'));
 
@@ -85,7 +87,8 @@ function App() {
           <Route path="/role-selection" element={<RoleSelectionPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
            {/* Channel Cards */}
             <Route path="/creator" element={<Creator />} />
           {/* Feeds */}
