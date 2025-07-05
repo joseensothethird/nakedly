@@ -113,17 +113,18 @@ const UsersList = () => {
       setLoading(true);
       setError('');
       const token = localStorage.getItem('token');
-      
-      if (!token) {
-        throw new Error('Authentication required. Please login.');
-      }
 
-      const response = await fetch(`http://localhost:5000/api/users?page=${page}&limit=${pagination.limit}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+if (!token) {
+  throw new Error('Authentication required. Please login.');
+}
+
+const response = await fetch(`http://localhost:5000/api/users?page=${page}&limit=${pagination.limit}`, {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+});
+
 
       const data = await response.json();
 

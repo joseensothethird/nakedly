@@ -1,44 +1,31 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const pool = require('./config/database');
+const pool = require('./Database/db');
 const authRoutes = require('./routes/AuthRoutes');
-const userRoutes = require('./routes/userRoutes');
-
+const conversationsRouter = require('./routes/messageRoutes');
+const paymentRoutes = require('./routes/PaymentRoutes');
 const app = express();
 
-// Middleware
+// ✅ Minimal working CORS config
 app.use(cors({
   origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
-// Optional: respond to OPTIONS preflight requests manually (if needed)
-app.options('*', cors());
 app.use(express.json());
+app.use('/api/auth', authRoutes);
+app.use('/api/conversations', conversationsRouter); // Changed from router.use to app.use
+app.use('/api/payments', paymentRoutes);
 
-// Database connection test
-pool.query('SELECT NOW()', (err) => {
-  if (err) {
-    console.error('Database connection error:', err.stack);
-  } else {
-    console.log('Connected to PostgreSQL database');
-  }
+app.get('/', (req, res) => {
+  res.send('API is running');
 });
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(500).json({ error: 'Server error' });
 });
 
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

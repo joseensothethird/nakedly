@@ -1,17 +1,9 @@
 import styled from 'styled-components';
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useContext } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { 
-  Home, 
-  Bell, 
-  MessageCircle, 
-  Bookmark, 
-  Users, 
-  CreditCard, 
-  User, 
-  Settings
-} from 'react-feather';
+import { Home, MessageCircle } from 'react-feather';
+import { AuthContext } from '../context/AuthContext';
 import {
   StickyNavigation,
   Navigation,
@@ -28,14 +20,18 @@ import {
   MenuButton,
   MobileNavItem,
   MobileNavIcon,
-  MobileNavText,
-  MobileNavItemText
+  MobileNavText
 } from '../styles/components';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState('home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Get authentication state from context
+  const { user, logout } = useContext(AuthContext);
+  const isLoggedIn = !!user;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -46,13 +42,19 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsMenuOpen(false);
+  };
+
   // Check if we're on a NewsFeed subpage
   const isNewsFeedPage = location.pathname.startsWith('/nakedly');
 
   return (
     <StickyNavigation>
       <Navigation>
-        <MenuButton onClick={toggleMenu}>
+        <MenuButton onClick={toggleMenu} aria-label="Toggle menu">
           {isMenuOpen ? <FaTimes /> : <FaBars />}
         </MenuButton>
 
@@ -62,7 +64,6 @@ const Navbar = () => {
         </LogoLink>
 
         {isNewsFeedPage ? (
-          // NewsFeed specific navigation
           <NavLinks>
             <NavItem
               to="/nakedly"
@@ -71,37 +72,8 @@ const Navbar = () => {
             >
               Home
             </NavItem>
-            <NavItem
-              to="/nakedly/notifications"
-              active={activeItem === 'notifications' ? 1 : 0}
-              onClick={() => setActiveItem('notifications')}
-            >
-              Notifications
-            </NavItem>
-            <NavItem
-              to="/nakedly/messages"
-              active={activeItem === 'messages' ? 1 : 0}
-              onClick={() => setActiveItem('messages')}
-            >
-              Messages
-            </NavItem>
-            <NavItem
-              to="/nakedly/collections"
-              active={activeItem === 'collections' ? 1 : 0}
-              onClick={() => setActiveItem('collections')}
-            >
-              Collections
-            </NavItem>
-            <NavItem
-              to="/nakedly/subscriptions"
-              active={activeItem === 'subscriptions' ? 1 : 0}
-              onClick={() => setActiveItem('subscriptions')}
-            >
-              Subscriptions
-            </NavItem>
           </NavLinks>
         ) : (
-          // Regular navigation
           <NavLinks>
             <NavItem
               to="/"
@@ -129,82 +101,26 @@ const Navbar = () => {
 
         <RightContainer>
           <DesktopSearch type="text" placeholder="Search..." />
-          <LoginButton as={Link} to="/role-selection">Login</LoginButton>
+          {isLoggedIn ? (
+            <LoginButton onClick={handleLogout}>Logout</LoginButton>
+          ) : (
+            <LoginButton as={Link} to="/role-selection">Login</LoginButton>
+          )}
         </RightContainer>
 
         <MobileMenu isOpen={isMenuOpen}>
           <SearchInput type="text" placeholder="Search..." />
 
           {isNewsFeedPage ? (
-            // Mobile NewsFeed specific navigation with icons
-            <>
-              <MobileNavItem
-                to="/nakedly"
-                active={activeItem === 'home' ? 1 : 0}
-                onClick={() => handleNavClick('home')}
-              >
-                <MobileNavIcon><Home size={20} /></MobileNavIcon>
-                <MobileNavText>NewsFeed</MobileNavText>
-              </MobileNavItem>
-              <MobileNavItem
-                to="/nakedly/notifications"
-                active={activeItem === 'notifications' ? 1 : 0}
-                onClick={() => handleNavClick('notifications')}
-              >
-                <MobileNavIcon><Bell size={20} /></MobileNavIcon>
-                <MobileNavText>Notifications</MobileNavText>
-              </MobileNavItem>
-              <MobileNavItem
-                to="/nakedly/messages"
-                active={activeItem === 'messages' ? 1 : 0}
-                onClick={() => handleNavClick('messages')}
-              >
-                <MobileNavIcon><MessageCircle size={20} /></MobileNavIcon>
-                <MobileNavText>Messages</MobileNavText>
-              </MobileNavItem>
-              <MobileNavItem
-                to="/nakedly/collections"
-                active={activeItem === 'collections' ? 1 : 0}
-                onClick={() => handleNavClick('collections')}
-              >
-                <MobileNavIcon><Bookmark size={20} /></MobileNavIcon>
-                <MobileNavText>Collections</MobileNavText>
-              </MobileNavItem>
-              <MobileNavItem
-                to="/nakedly/subscriptions"
-                active={activeItem === 'subscriptions' ? 1 : 0}
-                onClick={() => handleNavClick('subscriptions')}
-              >
-                <MobileNavIcon><Users size={20} /></MobileNavIcon>
-                <MobileNavText>Subscriptions</MobileNavText>
-              </MobileNavItem>
-              <MobileNavItem
-                to="/nakedly/card"
-                active={activeItem === 'card' ? 1 : 0}
-                onClick={() => handleNavClick('card')}
-              >
-                <MobileNavIcon><CreditCard size={20} /></MobileNavIcon>
-                <MobileNavText>Cards</MobileNavText>
-              </MobileNavItem>
-              <MobileNavItem
-                to="/nakedly/profile"
-                active={activeItem === 'profile' ? 1 : 0}
-                onClick={() => handleNavClick('profile')}
-              >
-                <MobileNavIcon><User size={20} /></MobileNavIcon>
-                <MobileNavText>Profile</MobileNavText>
-              </MobileNavItem>
-              <MobileNavItem
-                to="/nakedly/settings"
-                active={activeItem === 'settings' ? 1 : 0}
-                onClick={() => handleNavClick('settings')}
-              >
-                <MobileNavIcon><Settings size={20} /></MobileNavIcon>
-                <MobileNavText>Settings</MobileNavText>
-              </MobileNavItem>
-            </>
+            <MobileNavItem
+              to="/nakedly"
+              active={activeItem === 'home' ? 1 : 0}
+              onClick={() => handleNavClick('home')}
+            >
+              <MobileNavIcon><Home size={20} /></MobileNavIcon>
+              <MobileNavText>NewsFeed</MobileNavText>
+            </MobileNavItem>
           ) : (
-            // Mobile regular navigation
             <>
               <MobileNavItem
                 to="/"
@@ -219,7 +135,7 @@ const Navbar = () => {
                 active={activeItem === 'models' ? 1 : 0}
                 onClick={() => handleNavClick('models')}
               >
-                <MobileNavIcon><Users size={20} /></MobileNavIcon>
+                <MobileNavIcon><Home size={20} /></MobileNavIcon>
                 <MobileNavText>Models</MobileNavText>
               </MobileNavItem>
               <MobileNavItem
@@ -233,11 +149,17 @@ const Navbar = () => {
             </>
           )}
 
-          <MobileLoginButton as={Link} to="/role-selection">Login</MobileLoginButton>
+          {isLoggedIn ? (
+            <MobileLoginButton onClick={handleLogout}>Logout</MobileLoginButton>
+          ) : (
+            <MobileLoginButton as={Link} to="/role-selection" onClick={() => setIsMenuOpen(false)}>
+              Login
+            </MobileLoginButton>
+          )}
         </MobileMenu>
       </Navigation>
     </StickyNavigation>
   );
 };
 
-export default Navbar;MobileNavItemText
+export default Navbar;

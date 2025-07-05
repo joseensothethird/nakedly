@@ -66,8 +66,11 @@ const ErrorMessage = styled.div`
   text-align: center;
 `;
 
-const LoginPage = ({ role = 'user' }) => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+const LoginPage = () => {
+  const [formData, setFormData] = useState({ 
+    email: '', 
+    password: ''
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -78,45 +81,44 @@ const LoginPage = ({ role = 'user' }) => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-  try {
-    const response = await fetch('http://localhost:5000/api/auth/login', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({ 
-        email: formData.email, 
-        password: formData.password,
-        role 
-      }),
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error || 'Login failed');
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'Login failed');
+      }
+
+      // Store user data and token
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      // Immediate redirect to dashboard without any delay
+      navigate('/nakedly', { replace: true });
+      
+    } catch (err) {
+      setError(err.message || 'Login failed. Please try again.');
+      setLoading(false);
     }
-
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    navigate(role === 'admin' ? '/admin' : '/dashboard');
-    
-  } catch (err) {
-    setError(err.message || 'Failed to connect to server');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <PageWrapper>
       <AuthContainer>
-        <Title>Login {role !== 'user' ? `as ${role}` : ''}</Title>
+        <Title>Login</Title>
         
         {error && <ErrorMessage>{error}</ErrorMessage>}
 

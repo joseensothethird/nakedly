@@ -36,8 +36,17 @@ const checkRole = (allowedRoles) => (req, res, next) => {
   }
   next();
 };
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  
+  // In a real app, verify JWT token here
+  req.user = { id: 1 }; // Mock user ID
+  next();
+};
 
 module.exports = {
   verifyToken,
-  checkRole
+  checkRole,
+  authenticate
 };

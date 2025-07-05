@@ -1,64 +1,116 @@
 import React, { useState } from 'react';
-import { 
-  PageWrapper, 
-  AuthContainer, 
-  Title, 
-  Input, 
-  SubmitButton, 
-  FooterText
-} from '../../Components/styles/pages/AUTH';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-const AdminLoginPage = () => {
+const PageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+`;
+
+const AuthContainer = styled.div`
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+`;
+
+const Title = styled.h1`
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  
+  &:focus {
+    outline: none;
+    border-color: #646cff;
+  }
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  
+  &:hover {
+    background-color: #535bf2;
+  }
+  
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  color: #ff3333;
+  margin: 10px 0;
+  text-align: center;
+`;
+
+const LoginPage = () => {
   const [formData, setFormData] = useState({ 
     email: '', 
     password: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
+
     try {
-      const response = await fetch('http://localhost:5000/api/auth/admin-login', {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        }),
+        credentials: 'include',
+        body: JSON.stringify(formData),
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.error || 'Admin login failed');
+        throw new Error(data.error || data.message || 'Login failed');
       }
 
-      // Check if user has admin role
-      if (data.user.role !== 'admin') {
-        throw new Error('Access denied. Admin privileges required.');
-      }
+      // Store user data and token
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       
-      // Save admin token and data
-      localStorage.setItem('adminToken', data.token);
-      localStorage.setItem('adminData', JSON.stringify(data.user));
+      // Immediate redirect to dashboard without any delay
+      navigate('/admin-dashboard', { replace: true });
       
-      // Redirect to admin dashboard
-      window.location.href = '/admin/dashboard';
-      
-    } catch (error) {
-      console.error('Admin login error:', error);
-      setError(error.message);
-    } finally {
+    } catch (err) {
+      setError(err.message || 'Login failed. Please try again.');
       setLoading(false);
     }
   };
@@ -66,40 +118,38 @@ const AdminLoginPage = () => {
   return (
     <PageWrapper>
       <AuthContainer>
-        <Title>Admin Portal Login</Title>
-
-        {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+        <Title>Login</Title>
+        
+        {error && <ErrorMessage>{error}</ErrorMessage>}
 
         <form onSubmit={handleSubmit}>
           <Input
             type="email"
             name="email"
-            required
             value={formData.email}
             onChange={handleInputChange}
-            placeholder="Admin Email"
+            placeholder="Email"
+            required
+            disabled={loading}
           />
-
+          
           <Input
             type="password"
             name="password"
-            required
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Password"
+            required
+            disabled={loading}
           />
-
+          
           <SubmitButton type="submit" disabled={loading}>
-            {loading ? 'Authenticating...' : 'Access Dashboard'}
+            {loading ? 'Logging in...' : 'Log In'}
           </SubmitButton>
         </form>
-
-        <FooterText>
-          Restricted access. Contact <a href="mailto:support@company.com">system administrator</a> for assistance.
-        </FooterText>
       </AuthContainer>
     </PageWrapper>
   );
 };
 
-export default AdminLoginPage;
+export default LoginPage;

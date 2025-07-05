@@ -10,12 +10,12 @@ const lazyWithLoading = (componentImport) => {
     const startTime = performance.now();
     const component = await componentImport();
     const loadTime = performance.now() - startTime;
-    
+
     // Ensure loading shows for at least 500ms (even on fast networks)
     if (loadTime < 500) {
       await new Promise(resolve => setTimeout(resolve, 500 - loadTime));
     }
-    
+
     return component;
   });
 };
@@ -69,7 +69,7 @@ function App() {
   return (
     <>
       <Navbar />
-      
+
       {/* 4. Show spinner during both navigation AND suspense loading */}
       {(isNavigating || location.state?.isLoading) && <LazyLoading />}
 
@@ -88,23 +88,23 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-           {/* Channel Cards */}
-            <Route path="/creator" element={<Creator />} />
+          <Route path="/admindashboard" element={<AdminDashboard />} />
+          {/* Channel Cards */}
+          <Route path="/creator" element={<Creator />} />
           {/* Feeds */}
-    <Route path="/nakedly" element={<NewsFeed />}>
-  <Route index element={<HomeFeed />} />
-  <Route path="notifications" element={<NotificationsFeed />} />
-  <Route path="messages" element={<MessagesFeed />} />
-  <Route path="collections" element={<CollectionsFeed />} />
-  <Route path="subscriptions" element={<SubscriptionsFeed />} />
-  <Route path="card" element={<AddCardFeed />} />
-  <Route path="profile" element={<ProfileFeed />} />
-  <Route path="settings" element={<SettingsFeed />} />
-</Route>
+          <Route path="/nakedly" element={<NewsFeed />}>
+            <Route index element={<HomeFeed />} />
+            <Route path="notifications" element={<NotificationsFeed />} />
+            <Route path="messages" element={<MessagesFeed />} />
+            <Route path="collections" element={<CollectionsFeed />} />
+            <Route path="subscriptions" element={<SubscriptionsFeed />} />
+            <Route path="card" element={<AddCardFeed />} />
+            <Route path="profile" element={<ProfileFeed />} />
+            <Route path="settings" element={<SettingsFeed />} />
+          </Route>
         </Routes>
       </Suspense>
-      
+
       <FloatingChatbot />
       <Footer />
     </>
