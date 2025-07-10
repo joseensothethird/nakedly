@@ -100,7 +100,8 @@ export const Tab = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 60px;
+  min-width: 60px; 
+  font-size:12px;
   
   &:hover {
     background-color: #f5f5f5;
@@ -509,4 +510,92 @@ export const RemoveAttachment = styled.span`
   justify-content: center;
   cursor: pointer;
   font-size: 12px;
+`;
+export const ConversationActions = styled.div`
+  display: flex;
+  margin-left: auto;
+  gap: 10px;
+  position: relative;
+`;
+
+export const ActionButton = styled.button`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f0f2f5;
+  color: #00aff0;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  
+  &:hover {
+    background-color: #e4e6eb;
+  }
+`;
+
+export const DropdownMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  min-width: 200px;
+  overflow: hidden;
+`;
+
+export const DropdownItem = styled.div`
+  padding: 10px 15px;
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
+`;
+export const AcceptButton = styled.button`
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+  &:hover {
+    background-color: #45a049;
+  }
+`;
+
+export const DeclineButton = styled.button`
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: #d32f2f;
+  }
+`;
+
+export const RequestBadge = styled.span`
+  background-color: #f44336;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin-left: 5px;
+`;
+
+export const RequestActions = styled.div`
+  display: flex;
+  margin-left: auto;
+  padding: 0 10px;
 `;
