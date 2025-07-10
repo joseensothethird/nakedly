@@ -1,4 +1,4 @@
-const PaymentService = require('../services/paymentService');
+const PaymentService = require('../Services/PaymentService');
 
 const PaymentController = {
   // Add a bank card

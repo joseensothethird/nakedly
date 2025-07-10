@@ -1,4 +1,4 @@
-const PaymentModel = require('../models/paymentModel');
+const PaymentModel = require('../Model/PaymentModel');
 
 class PaymentService {
   // Add bank card

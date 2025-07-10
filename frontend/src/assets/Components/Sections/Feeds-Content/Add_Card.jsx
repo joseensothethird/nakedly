@@ -1,19 +1,5 @@
-import React, { useState } from 'react';
-import {
-  CreditCard,
-  DollarSign,
-  Plus,
-  ChevronRight,
-  CheckCircle,
-  ArrowDownCircle,
-  ArrowUpCircle,
-  Home,
-  Calendar,
-  Clock,
-  Filter,
-  Search,
-  Download
-} from 'react-feather';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import {
   PaymentContainer,
   PaymentHeader,
@@ -57,246 +43,323 @@ import {
   PaginationControls,
   PageButton,
   TransactionTypeFilter
-} from '../../styles/pages/feeds';
+} from '../../styles/pages/feeds'; // Adjust the path as needed
+// Styled Components
 
-const PaymentCard = ({ 
-  paymentMethods = [], 
-  earnings = null, 
-  transactions = [],
-  allTransactions = [] 
-}) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filter, setFilter] = useState('all');
-  const transactionsPerPage = 10;
 
-  // Filter transactions based on search term and filter type
-  const filteredTransactions = allTransactions.filter(transaction => {
-    const matchesSearch = transaction.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         transaction.amount.toString().includes(searchTerm);
-    const matchesFilter = filter === 'all' || transaction.type === filter;
-    return matchesSearch && matchesFilter;
+// PaymentCard Component
+const PaymentCard = () => {
+  const [connectedAccounts, setConnectedAccounts] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedType, setSelectedType] = useState('');
+  const [accountInfo, setAccountInfo] = useState({});
+  const token = localStorage.getItem('token');
+
+  const [newTransaction, setNewTransaction] = useState({
+    amount: '',
+    status: 'completed',
+    method_id: '',
+    description: ''
   });
 
-  // Pagination logic
-  const indexOfLastTransaction = currentPage * transactionsPerPage;
-  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
-  const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+  // Fetch connected accounts
+  useEffect(() => {
+    fetch('http://localhost:5000/api/payment/method', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => setConnectedAccounts(data))
+      .catch(err => console.error('Error fetching methods:', err));
+  }, [token]);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  // Fetch transactions
+  useEffect(() => {
+    fetch('http://localhost:5000/api/payment/transaction', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => setTransactions(data))
+      .catch(err => console.error('Error fetching transactions:', err));
+  }, [token]);
+
+  const handleSubmitConnection = async () => {
+    if (!selectedType || Object.values(accountInfo).some(v => !v)) {
+      alert('Please fill all fields.');
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:5000/api/payment/method', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          method_type: selectedType,
+          account_info: accountInfo,
+          is_default: connectedAccounts.length === 0
+        })
+      });
+
+      const data = await res.json();
+      setConnectedAccounts(prev => [data, ...prev]);
+      setShowModal(false);
+      setSelectedType('');
+      setAccountInfo({});
+    } catch (err) {
+      console.error('Failed to connect account:', err);
+    }
   };
 
-  const handleExport = () => {
-    // Implement export functionality (CSV, PDF, etc.)
-    console.log('Exporting transactions...');
+  const renderFormFields = () => {
+    if (selectedType === 'paypal') {
+      return (
+        <FormGroup>
+          <Label>PayPal Email</Label>
+          <Input
+            type="email"
+            placeholder="example@paypal.com"
+            value={accountInfo.email || ''}
+            onChange={e => setAccountInfo({ email: e.target.value })}
+          />
+        </FormGroup>
+      );
+    } else if (selectedType === 'bank') {
+      return (
+        <>
+          <FormGroup>
+            <Label>Bank Name</Label>
+            <Input
+              type="text"
+              placeholder="e.g. Chase, Bank of America"
+              value={accountInfo.bank_name || ''}
+              onChange={e => setAccountInfo({ ...accountInfo, bank_name: e.target.value })}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label>Account Number</Label>
+            <Input
+              type="text"
+              placeholder="123456789"
+              value={accountInfo.account_number || ''}
+              onChange={e => setAccountInfo({ ...accountInfo, account_number: e.target.value })}
+            />
+          </FormGroup>
+        </>
+      );
+    } else if (selectedType === 'ewallet') {
+      return (
+        <>
+          <FormGroup>
+            <Label>eWallet Provider</Label>
+            <Input
+              type="text"
+              placeholder="e.g. GCash, Maya"
+              value={accountInfo.ewallet || ''}
+              onChange={e => setAccountInfo({ ...accountInfo, ewallet: e.target.value })}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label>Phone Number</Label>
+            <Input
+              type="text"
+              placeholder="+1 234 567 8900"
+              value={accountInfo.phone || ''}
+              onChange={e => setAccountInfo({ ...accountInfo, phone: e.target.value })}
+            />
+          </FormGroup>
+        </>
+      );
+    }
+
+    return null;
+  };
+
+  const addTransaction = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/payment/transaction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...newTransaction,
+          amount: parseFloat(newTransaction.amount)
+        })
+      });
+
+      const data = await res.json();
+      setTransactions(prev => [data, ...prev]);
+      setNewTransaction({ amount: '', status: 'completed', method_id: '', description: '' });
+    } catch (err) {
+      console.error('Failed to add transaction:', err);
+    }
+  };
+
+  const getMethodIcon = (type) => {
+    switch(type) {
+      case 'paypal':
+        return 'P';
+      case 'bank':
+        return 'B';
+      case 'ewallet':
+        return 'E';
+      default:
+        return '?';
+    }
   };
 
   return (
     <PaymentContainer>
       <PaymentHeader>
-        <PaymentTitle>Payments & Earnings</PaymentTitle>
+        <PaymentTitle>Payment Methods</PaymentTitle>
       </PaymentHeader>
 
       <PaymentContent>
-        {/* Payment Methods Section */}
         <PaymentSection>
-          <SectionTitle>Payment Methods</SectionTitle>
-          <SectionSubtitle>How you receive payments</SectionSubtitle>
+          <SectionTitle>Connected Accounts</SectionTitle>
+          <SectionSubtitle>Manage your payment methods for withdrawals and deposits</SectionSubtitle>
 
-          {paymentMethods.length > 0 ? (
-            paymentMethods.map((method, index) => (
-              <PaymentMethod key={index}>
-                <MethodCard>
-                  <MethodDetails>
-                    <MethodIcon>
-                      {method.type === 'card' ? <CreditCard size={20} /> : <Home size={20} />}
-                    </MethodIcon>
-                    <MethodInfo>
-                      <MethodName>
-                        {method.name} •••• {method.last4}
-                        {method.primary && <CheckCircle size={16} />}
-                      </MethodName>
-                    </MethodInfo>
-                  </MethodDetails>
-                  <MethodAction>
-                    <ChevronRight size={20} />
-                  </MethodAction>
-                </MethodCard>
-              </PaymentMethod>
-            ))
-          ) : (
+          {connectedAccounts.length === 0 ? (
             <EmptyState>
-              <EmptyStateIcon>
-                <CreditCard size={40} />
-              </EmptyStateIcon>
-              <EmptyStateText>No payment methods added</EmptyStateText>
+              <EmptyStateText>No payment methods connected</EmptyStateText>
             </EmptyState>
+          ) : (
+            connectedAccounts.map(account => (
+              <MethodCard key={account.id}>
+                <MethodDetails>
+                  <MethodIcon>{getMethodIcon(account.method_type)}</MethodIcon>
+                  <MethodInfo>
+                    <MethodName>
+                      {account.method_type.toUpperCase()}
+                      {account.is_default && <span style={{ color: 'green', fontSize: '12px', marginLeft: '8px' }}>(Default)</span>}
+                    </MethodName>
+                    <div style={{ fontSize: '12px', color: '#6B7280' }}>
+                      {Object.entries(account.account_info).map(([key, value]) => (
+                        <div key={key}>{key}: {value}</div>
+                      ))}
+                    </div>
+                  </MethodInfo>
+                </MethodDetails>
+                <MethodAction>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </MethodAction>
+              </MethodCard>
+            ))
           )}
 
-          <AddMethodButton>
-            <Plus size={20} />
-            <span>Add payment method</span>
+          <AddMethodButton onClick={() => setShowModal(true)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Connect New Payment Method
           </AddMethodButton>
         </PaymentSection>
 
-        {/* Earnings Section */}
-        {earnings && (
-          <PaymentSection>
-            <SectionTitle>Your Earnings</SectionTitle>
-            <SectionSubtitle>All time balance and payouts</SectionSubtitle>
-
-            <EarningsSummary>
-              <EarningsCard>
-                <EarningsHeader>
-                  <DollarSign size={20} />
-                  <span>Total Earnings</span>
-                </EarningsHeader>
-                <EarningsAmount>${earnings.total.toFixed(2)}</EarningsAmount>
-                <EarningsLabel>All time</EarningsLabel>
-              </EarningsCard>
-
-              <EarningsCard>
-                <EarningsHeader>
-                  <DollarSign size={20} />
-                  <span>Available Now</span>
-                </EarningsHeader>
-                <EarningsAmount>${earnings.available.toFixed(2)}</EarningsAmount>
-                <EarningsLabel>Ready to withdraw</EarningsLabel>
-              </EarningsCard>
-            </EarningsSummary>
-
-            <EarningsBreakdown>
-              <BreakdownItem>
-                <BreakdownLabel>Pending clearance</BreakdownLabel>
-                <BreakdownValue>${earnings.pending.toFixed(2)}</BreakdownValue>
-              </BreakdownItem>
-              <BreakdownItem>
-                <BreakdownLabel>This month</BreakdownLabel>
-                <BreakdownValue>${earnings.thisMonth.toFixed(2)}</BreakdownValue>
-              </BreakdownItem>
-              <BreakdownItem>
-                <BreakdownLabel>Last month</BreakdownLabel>
-                <BreakdownValue>${earnings.lastMonth.toFixed(2)}</BreakdownValue>
-              </BreakdownItem>
-            </EarningsBreakdown>
-          </PaymentSection>
-        )}
-
-        {/* Comprehensive Transactions Section */}
         <PaymentSection>
-          <TransactionHeader>
-            <div>
-              <SectionTitle>Transaction History</SectionTitle>
-              <SectionSubtitle>All deposits and withdrawals</SectionSubtitle>
-            </div>
-            <TransactionControls>
-              <CardSearchInput>
-                <Search size={16} />
-                <input 
-                  type="text" 
-                  placeholder="Search transactions..." 
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                />
-              </CardSearchInput>
-              <TransactionTypeFilter>
-                <select 
-                  value={filter} 
-                  onChange={(e) => {
-                    setFilter(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                >
-                  <option value="all">All Transactions</option>
-                  <option value="deposit">Deposits</option>
-                  <option value="withdrawal">Withdrawals</option>
-                </select>
-              </TransactionTypeFilter>
-              <ExportButton onClick={handleExport}>
-                <Download size={16} />
-                <span>Export</span>
-              </ExportButton>
-            </TransactionControls>
-          </TransactionHeader>
+          <SectionTitle>Transaction History</SectionTitle>
+          <SectionSubtitle>View your payment transactions</SectionSubtitle>
 
-          {currentTransactions.length > 0 ? (
-            <>
-              <TransactionHistory>
-                {currentTransactions.map((transaction, index) => (
-                  <TransactionItem key={index}>
-                    <TransactionIcon>
-                      {transaction.type === 'deposit' ? (
-                        <ArrowDownCircle size={20} color="#10B981" />
-                      ) : (
-                        <ArrowUpCircle size={20} color="#EF4444" />
-                      )}
-                    </TransactionIcon>
-                    <TransactionDetails>
-                      <TransactionName>{transaction.name}</TransactionName>
-                      <TransactionDate>
-                        {transaction.date.includes('week') || transaction.date.includes('day') ? (
-                          <Clock size={12} style={{ marginRight: 4 }} />
-                        ) : (
-                          <Calendar size={12} style={{ marginRight: 4 }} />
-                        )}
-                        {transaction.date}
-                      </TransactionDate>
-                    </TransactionDetails>
-                    <TransactionAmount positive={transaction.type === 'deposit'}>
-                      {transaction.type === 'deposit' ? '+' : '-'}
-                      ${Math.abs(transaction.amount).toFixed(2)}
-                    </TransactionAmount>
-                  </TransactionItem>
-                ))}
-              </TransactionHistory>
-
-              {totalPages > 1 && (
-                <PaginationControls>
-                  <PageButton 
-                    disabled={currentPage === 1}
-                    onClick={() => handlePageChange(currentPage - 1)}
-                  >
-                    Previous
-                  </PageButton>
-                  
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <PageButton
-                      key={page}
-                      active={page === currentPage}
-                      onClick={() => handlePageChange(page)}
-                    >
-                      {page}
-                    </PageButton>
-                  ))}
-                  
-                  <PageButton 
-                    disabled={currentPage === totalPages}
-                    onClick={() => handlePageChange(currentPage + 1)}
-                  >
-                    Next
-                  </PageButton>
-                </PaginationControls>
-              )}
-            </>
-          ) : (
+          {transactions.length === 0 ? (
             <EmptyState>
-              <EmptyStateIcon>
-                <CreditCard size={40} />
-              </EmptyStateIcon>
-              <EmptyStateText>
-                {filter === 'all' 
-                  ? 'No transactions found' 
-                  : `No ${filter} transactions found`}
-              </EmptyStateText>
+              <EmptyStateText>No transactions yet</EmptyStateText>
             </EmptyState>
+          ) : (
+            <>
+              <TransactionTable>
+                <thead>
+                  <tr>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                    <th>Method</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map(tx => (
+                    <tr key={tx.id}>
+                      <td>${tx.amount}</td>
+                      <td>
+                        <span style={{
+                          color: tx.status === 'completed' ? '#10B981' : 
+                                 tx.status === 'pending' ? '#F59E0B' : '#EF4444',
+                          fontWeight: 500
+                        }}>
+                          {tx.status}
+                        </span>
+                      </td>
+                      <td>{tx.description}</td>
+                      <td>{tx.method_type}</td>
+                      <td>{new Date(tx.created_at).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </TransactionTable>
+            </>
           )}
         </PaymentSection>
+
       </PaymentContent>
+
+      {/* Modal */}
+      {showModal && (
+        <ModalOverlay>
+          <ModalContent>
+            <ModalHeader>Connect Payment Method</ModalHeader>
+            
+            {!selectedType ? (
+              <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+                <Button className="outline" onClick={() => setSelectedType('paypal')}>
+                  PayPal
+                </Button>
+                <Button className="outline" onClick={() => setSelectedType('bank')}>
+                  Bank Account
+                </Button>
+                <Button className="outline" onClick={() => setSelectedType('ewallet')}>
+                  eWallet
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <p style={{ marginBottom: '16px', color: '#6B7280', fontSize: '14px' }}>
+                  <strong style={{ color: '#1F2937' }}>{selectedType.toUpperCase()}</strong> connection details
+                </p>
+                {renderFormFields()}
+              </div>
+            )}
+
+            <ModalFooter>
+              {selectedType && (
+                <Button className="secondary" onClick={() => setSelectedType('')}>
+                  Back
+                </Button>
+              )}
+              {selectedType ? (
+                <Button className="primary" onClick={handleSubmitConnection}>
+                  Connect Account
+                </Button>
+              ) : (
+                <Button className="secondary" onClick={() => setShowModal(false)}>
+                  Cancel
+                </Button>
+              )}
+            </ModalFooter>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </PaymentContainer>
   );
 };

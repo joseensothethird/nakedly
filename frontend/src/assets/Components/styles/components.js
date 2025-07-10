@@ -290,7 +290,7 @@ export const ChatbotContainer = styled.div`
 `;
 
 export const ChatButton = styled.button`
-  background: linear-gradient(135deg, #0084ff, #006fff);
+  background: #fff;
   color: white;
   border: none;
   border-radius: 50%;
@@ -357,8 +357,8 @@ export const ChatHeader = styled.div`
 `;
 
 export const ChatLogo = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
 `;
 

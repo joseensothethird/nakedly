@@ -1,243 +1,571 @@
-// src/components/MessageFeed.js
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Search,
-  MoreHorizontal,
-  ArrowLeft,
-  Paperclip,
-  Send,
-  Smile
-} from 'react-feather';
-import { 
-  MessageContainer,
-  MessageHeader,
-  MessageSearch,
-  MessageConversationList,
-  MessageConversationItem,
-  MessageAvatar,
-  MessageUserInfo,
-  MessageUserName,
-  MessagePreviewText,
-  MessageTimestamp,
-  MessageUnreadCount,
-  MessageComposer,
-  MessageInputField,
-  MessageActionButton,
-  MessageSendButton,
-   MessageContent,
-  MessageBubble,  
-  MessageList,
-} from '../../styles/pages/feeds';
+import axios from 'axios';
+import io from 'socket.io-client';
 import { useAuth } from '../../context/AuthContext';
+import {
+  ChatAppContainer,
+  Header,
+  Content,
+  Username,
+  Title,
+  SearchContainer,
+  SearchInput,
+  SearchResults,
+  SearchResult,
+  UserName,
+  EmptyState,
+  ConversationHeader,
+  ConversationList,
+  MessageArea,
+  Tabs,
+  Tab,
+  MessageList,
+  MessageItem,
+  UserAvatar,
+  MessagePreview,
+  MessageText,
+  TimeStamp,
+  PremiumBadge,
+  MessageInput,
+  MessageBubble,
+  MessageSender,
+  MessageContent,
+  MessageTime,
+  UnreadBadge,
+  HeaderRight,
+  LoadingText,
+  NoResultsText,
+  ConversationInfo,
+  OnlineStatus,
+  MessageInputContainer,
+  SendButton,
+  AttachmentButton,
+  AttachmentPreview,
+  RemoveAttachment
+} from '../../styles/pages/Messages';
 
-const MessageFeed = () => {
-  const { user, token } = useAuth();
+function ChatApp() {
+  const [activeTab, setActiveTab] = useState('messages');
   const [conversations, setConversations] = useState([]);
-  const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [currentConversation, setCurrentConversation] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [newMessage, setNewMessage] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [attachment, setAttachment] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+  const searchInputRef = useRef();
   const messagesEndRef = useRef(null);
-
-  // Fetch conversations
-  useEffect(() => {
-    if (!token) return;
-    
-    const fetchConversations = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/conversations', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          }
-        });
-        const data = await response.json();
-        setConversations(data);
-      } catch (err) {
-        console.error('Error fetching conversations:', err);
-      }
-    };
-    
-    fetchConversations();
-  }, [token]);
-
-  // Fetch messages when conversation is selected
-  useEffect(() => {
-    if (!selectedConversation || !token) return;
-    
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/conversations/${selectedConversation}/messages`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            }
-          }
-        );
-        const data = await response.json();
-        setMessages(data);
-        scrollToBottom();
-      } catch (err) {
-        console.error('Error fetching messages:', err);
-      }
-    };
-    
-    fetchMessages();
-    const interval = setInterval(fetchMessages, 5000); // Polling for new messages
-    
-    return () => clearInterval(interval);
-  }, [selectedConversation, token]);
+  const socketRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedConversation || !token) return;
-    
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/conversations/${selectedConversation}/messages`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ content: newMessage })
-        }
-      );
-      
-      const sentMessage = await response.json();
-      setMessages([...messages, {
-        ...sentMessage,
-        sender_id: user.id,
-        sender_name: `${user.first_name} ${user.last_name}`,
-        sender_avatar: `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`
-      }]);
-      
-      setNewMessage('');
-      scrollToBottom();
-    } catch (err) {
-      console.error('Error sending message:', err);
+  // Search handlers
+  const handleSearchFocus = () => {
+    if (searchQuery.length >= 1) {
+      setShowResults(true);
     }
   };
 
-  const formatTime = (timestamp) => {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
+  const handleSearchBlur = () => {
+    setTimeout(() => {
+      setShowResults(false);
+    }, 200);
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    searchUsers(query);
+  };
+
+  const handleUserSelect = (selectedUser) => {
+    startChat(selectedUser.id);
+    setSearchQuery('');
+    setShowResults(false);
+    setSearchResults([]);
+    if (searchInputRef.current) searchInputRef.current.blur();
+  };
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const filteredConversations = conversations.filter(conv => 
-    conv.user_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const removeAttachment = () => {
+    setAttachment(null);
+  };
+
+  const handleAttachmentChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setAttachment(e.target.files[0]);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  useEffect(() => {
+    socketRef.current = io('http://localhost:5000', {
+      auth: {
+        token: localStorage.getItem('token')
+      }
+    });
+
+    if (user?.id) {
+      socketRef.current.emit('joinUserRoom', user.id);
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, [user]);
+
+  useEffect(() => {
+    const loadConversations = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get('http://localhost:5000/api/conversations', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        setConversations(response.data.map(conv => ({
+          ...conv,
+          participantName: conv.participant?.username || 'Unknown',
+          participantIsPremium: conv.participant?.is_premium || false,
+          last_message: conv.last_message || 'No messages yet',
+          last_message_time: conv.last_message_time 
+            ? formatTime(conv.last_message_time)
+            : 'now'
+        })));
+      } catch (error) {
+        console.error('Failed to load conversations:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    if (user) {
+      loadConversations();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (socketRef.current) {
+      const handleNewMessage = (message) => {
+        if (currentConversation && message.conversation_id === currentConversation.id) {
+          setMessages(prev => [...prev, {
+            ...message,
+            sender_name: message.sender?.username || 'Unknown'
+          }]);
+          scrollToBottom();
+        }
+        
+        setConversations(prev => 
+          prev.map(conv => {
+            if (conv.id === message.conversation_id) {
+              return { 
+                ...conv, 
+                last_message: message.content || 'Attachment', 
+                last_message_time: 'now',
+                unread_count: currentConversation?.id === conv.id ? 0 : (conv.unread_count || 0) + 1
+              };
+            }
+            return conv;
+          })
+        );
+      };
+
+      socketRef.current.on('newMessage', handleNewMessage);
+
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.off('newMessage', handleNewMessage);
+        }
+      };
+    }
+  }, [currentConversation]);
+
+  useEffect(() => {
+    if (currentConversation) {
+      loadMessages(currentConversation.id);
+    }
+  }, [currentConversation]);
+
+  const loadMessages = async (conversationId) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `http://localhost:5000/api/conversations/${conversationId}/messages`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      
+      setMessages(response.data.map(msg => ({
+        ...msg,
+        sender_name: msg.sender?.username || 'Unknown'
+      })));
+      
+      setConversations(prev => 
+        prev.map(conv => 
+          conv.id === conversationId 
+            ? { ...conv, unread_count: 0 }
+            : conv
+        )
+      );
+    } catch (error) {
+      console.error('Failed to load messages:', error);
+    } finally {
+      setIsLoading(false);
+      scrollToBottom();
+    }
+  };
+
+  const searchUsers = async (query) => {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    if (!query || query.trim().length < 1) {
+      setSearchResults([]);
+      setShowResults(false);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    setShowResults(true);
+    
+    const timeout = setTimeout(async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/users/search', {
+          params: { username: query },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        setSearchResults(response.data.map(user => ({
+          id: user.id,
+          username: user.username,
+          is_premium: user.is_premium || false
+        })));
+      } catch (error) {
+        console.error('Search failed:', error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    setSearchTimeout(timeout);
+  };
+
+  const startChat = async (userId) => {
+    try {
+      const existingConversation = conversations.find(conv => 
+        conv.participant?.id === userId
+      );
+      
+      if (existingConversation) {
+        setCurrentConversation(existingConversation);
+        return;
+      }
+
+      const response = await axios.post(
+        'http://localhost:5000/api/conversations',
+        { participantId: userId },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+
+      const newConversation = {
+        id: response.data.id,
+        participant: {
+          id: response.data.participant.id,
+          username: response.data.participant.username,
+          is_premium: response.data.participant.is_premium
+        },
+        last_message: '',
+        last_message_time: 'now',
+        unread_count: 0
+      };
+
+      setCurrentConversation(newConversation);
+      setConversations(prev => [newConversation, ...prev]);
+    } catch (error) {
+      console.error('Error starting chat:', error);
+      alert('Failed to start conversation. Please try again.');
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!currentConversation || (!newMessage.trim() && !attachment)) return;
+
+    try {
+      const formData = new FormData();
+      if (newMessage) formData.append('content', newMessage);
+      if (attachment) formData.append('attachment', attachment);
+
+      const response = await axios.post(
+        `http://localhost:5000/api/conversations/${currentConversation.id}/messages`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      const sentMessage = response.data;
+      setMessages(prev => [...prev, sentMessage]);
+      setConversations(prev => 
+        prev.map(conv => 
+          conv.id === currentConversation.id 
+            ? { 
+                ...conv, 
+                last_message: newMessage || 'Attachment', 
+                last_message_time: 'now' 
+              }
+            : conv
+        )
+      );
+      setNewMessage('');
+      setAttachment(null);
+      scrollToBottom();
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      alert('Failed to send message. Please try again.');
+    }
+  };
 
   return (
-    <MessageContainer>
-      <MessageHeader>
-        {selectedConversation ? (
-          <>
-            <ArrowLeft size={20} onClick={() => setSelectedConversation(null)} />
-            <h3>
-              {conversations.find(c => c.id === selectedConversation)?.user_name || 'Chat'}
-            </h3>
-          </>
-        ) : (
-          <h3>Messages</h3>
-        )}
-        <MoreHorizontal size={20} />
-      </MessageHeader>
-
-      {!selectedConversation ? (
-        <>
-          <MessageSearch>
-            <Search size={18} />
-            <input 
-              type="text" 
-              placeholder="Search messages" 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+    <ChatAppContainer>
+      <Header>
+        <Title>Messenger</Title>
+        <HeaderRight>
+          <SearchContainer>
+            <SearchInput
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onFocus={handleSearchFocus}
+              onBlur={handleSearchBlur}
+              placeholder="Search for people..."
             />
-          </MessageSearch>
 
-          <MessageConversationList>
-            {filteredConversations.map(conv => (
-              <MessageConversationItem
-                key={conv.id}
-                onClick={() => setSelectedConversation(conv.id)}
+            {showResults && (
+              <SearchResults>
+                {isSearching ? (
+                  <LoadingText>Searching...</LoadingText>
+                ) : searchResults.length > 0 ? (
+                  searchResults.map(user => (
+                    <SearchResult
+                      key={user.id}
+                      onClick={() => handleUserSelect(user)}
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
+                      <UserName>
+                        {user.username}
+                        {user.is_premium && <PremiumBadge>PREMIUM</PremiumBadge>}
+                      </UserName>
+                    </SearchResult>
+                  ))
+                ) : searchQuery.length >= 1 ? (
+                  <NoResultsText>No users found for "{searchQuery}"</NoResultsText>
+                ) : (
+                  <NoResultsText>Type to search</NoResultsText>
+                )}
+              </SearchResults>
+            )}
+          </SearchContainer>
+          <Username>{user?.username || 'Guest'}</Username>
+        </HeaderRight>
+      </Header>
+
+      <Content>
+        <ConversationList>
+          <Tabs>
+            <Tab active={activeTab === 'messages'} onClick={() => setActiveTab('messages')}>
+              Messages
+            </Tab>
+            <Tab active={activeTab === 'requests'} onClick={() => setActiveTab('requests')}>
+              Requests
+            </Tab>
+          </Tabs>
+
+          {!user ? (
+            <EmptyState>Please log in to view your messages</EmptyState>
+          ) : isLoading && conversations.length === 0 ? (
+            <LoadingText>Loading conversations...</LoadingText>
+          ) : conversations.length > 0 ? (
+            conversations.map(conv => (
+              <MessageItem 
+                key={conv.id} 
+                onClick={() => setCurrentConversation(conv)}
+                active={currentConversation?.id === conv.id}
               >
-                <MessageAvatar online={conv.online}>
-                  {conv.user_avatar}
-                </MessageAvatar>
-                <MessageUserInfo>
-                  <MessageUserName>{conv.user_name}</MessageUserName>
-                  <MessagePreviewText>{conv.last_message}</MessagePreviewText>
-                </MessageUserInfo>
-                <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                  <MessageTimestamp>
-                    {formatTime(conv.last_message_time)}
-                  </MessageTimestamp>
-                  {conv.unread_count > 0 && (
-                    <MessageUnreadCount>{conv.unread_count}</MessageUnreadCount>
-                  )}
-                </div>
-              </MessageConversationItem>
-            ))}
-          </MessageConversationList>
-        </>
-      ) : (
-        <>
-          <MessageContent>
-            <MessageList>
-              {messages.map(message => (
-                <MessageBubble 
-                  key={message.id}
-                  currentUser={message.sender_id === user.id}
-                >
-                  {message.sender_id !== user.id && (
-                    <MessageAvatar small>
-                      {message.sender_avatar}
-                    </MessageAvatar>
-                  )}
-                  <div>
-                    {message.sender_id !== user.id && (
-                      <MessageUserName small>{message.sender_name}</MessageUserName>
+                <UserAvatar>
+                  {conv.participant?.username?.charAt(0)?.toUpperCase() || 'U'}
+                </UserAvatar>
+                <MessagePreview>
+                  <Username>
+                    {conv.participant?.username || 'Unknown'}
+                    {conv.participant?.is_premium && <PremiumBadge>PREMIUM</PremiumBadge>}
+                    <TimeStamp>
+                      {conv.last_message_time === 'now' ? 'now' : conv.last_message_time}
+                    </TimeStamp>
+                  </Username>
+                  <MessageText>
+                    {conv.last_message?.length > 30 
+                      ? `${conv.last_message.substring(0, 30)}...` 
+                      : conv.last_message}
+                    {conv.is_my_last_message && ' (You)'}
+                  </MessageText>
+                </MessagePreview>
+                {conv.unread_count > 0 && (
+                  <UnreadBadge>{conv.unread_count}</UnreadBadge>
+                )}
+              </MessageItem>
+            ))
+          ) : (
+            <EmptyState>No conversations yet. Search for someone to message!</EmptyState>
+          )}
+        </ConversationList>
+
+        <MessageArea>
+          {!user ? (
+            <EmptyState>Please log in to send messages</EmptyState>
+          ) : currentConversation ? (
+            <>
+              <ConversationHeader>
+                <UserAvatar>
+                  {currentConversation.participant?.username?.charAt(0)?.toUpperCase() || 'U'}
+                </UserAvatar>
+                <ConversationInfo>
+                  <Username>
+                    {currentConversation.participant?.username || 'Unknown'}
+                    {currentConversation.participant?.is_premium && <PremiumBadge>PREMIUM</PremiumBadge>}
+                  </Username>
+                  <OnlineStatus>Online</OnlineStatus>
+                </ConversationInfo>
+              </ConversationHeader>
+              
+              <MessageList>
+                {isLoading ? (
+                  <LoadingText>Loading messages...</LoadingText>
+                ) : messages.length > 0 ? (
+                  messages.map(msg => (
+                    <MessageBubble 
+                      key={msg.id} 
+                      isCurrentUser={msg.sender_id === user?.id}
+                    >
+                      {msg.sender_id !== user?.id && (
+                        <MessageSender>{msg.sender_name}</MessageSender>
+                      )}
+                      <MessageContent>
+                        {msg.content}
+                        {msg.attachment && (
+                          <a 
+                            href={msg.attachment.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            {msg.attachment.type === 'image' ? (
+                              <img 
+                                src={msg.attachment.url} 
+                                alt="Attachment" 
+                                style={{ maxWidth: '200px', maxHeight: '200px' }}
+                              />
+                            ) : (
+                              `Download ${msg.attachment.type}`
+                            )}
+                          </a>
+                        )}
+                      </MessageContent>
+                      <MessageTime isCurrentUser={msg.sender_id === user?.id}>
+                        {formatTime(msg.created_at)}
+                        {msg.is_read && msg.sender_id === user?.id && ' ✓✓'}
+                      </MessageTime>
+                    </MessageBubble>
+                  ))
+                ) : (
+                  <EmptyState>No messages yet. Say hello!</EmptyState>
+                )}
+                <div ref={messagesEndRef} />
+              </MessageList>
+              
+              <MessageInputContainer>
+                {attachment && (
+                  <AttachmentPreview>
+                    {attachment.type.startsWith('image/') ? (
+                      <img 
+                        src={URL.createObjectURL(attachment)} 
+                        alt="Preview" 
+                        style={{ maxWidth: '100px', maxHeight: '100px' }}
+                      />
+                    ) : (
+                      <span>{attachment.name}</span>
                     )}
-                    <p>{message.content}</p>
-                    <MessageTimestamp small>
-                      {formatTime(message.created_at)}
-                    </MessageTimestamp>
-                  </div>
-                </MessageBubble>
-              ))}
-              <div ref={messagesEndRef} />
-            </MessageList>
-          </MessageContent>
-
-          <MessageComposer>
-            <MessageActionButton>
-              <Paperclip size={20} />
-            </MessageActionButton>
-            <MessageInputField
-              placeholder="Type a message..." 
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            />
-            <MessageActionButton>
-              <Smile size={20} />
-            </MessageActionButton>
-            <MessageSendButton
-              onClick={handleSendMessage}
-            >
-              <Send size={20} />
-            </MessageSendButton>
-          </MessageComposer>
-        </>
-      )}
-    </MessageContainer>
+                    <RemoveAttachment onClick={removeAttachment}>×</RemoveAttachment>
+                  </AttachmentPreview>
+                )}
+                <AttachmentButton>
+                  <input 
+                    type="file" 
+                    onChange={handleAttachmentChange}
+                    style={{ display: 'none' }}
+                    id="attachment-input"
+                  />
+                  <label htmlFor="attachment-input">📎</label>
+                </AttachmentButton>
+                <MessageInput
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type a message..."
+                />
+                <SendButton 
+                  onClick={sendMessage}
+                  disabled={!newMessage.trim() && !attachment}
+                >
+                  Send
+                </SendButton>
+              </MessageInputContainer>
+            </>
+          ) : (
+            <EmptyState>
+              {conversations.length > 0 
+                ? "Select a conversation to start chatting" 
+                : "Search for someone to start a new conversation"}
+            </EmptyState>
+          )}
+        </MessageArea>
+      </Content>
+    </ChatAppContainer>
   );
-};
+}
 
-export default MessageFeed;
+export default ChatApp;

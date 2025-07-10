@@ -97,6 +97,17 @@ const TableResponsive = styled.div`
   overflow-x: auto;
 `;
 
+const VerifiedBadge = styled.span`
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: ${props => props.verified ? '#28a745' : '#dc3545'};
+  color: white;
+  margin-left: 8px;
+`;
+
 const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -108,39 +119,49 @@ const UsersList = () => {
     totalPages: 1
   });
 
-  const fetchUsers = async (page = 1) => {
-    try {
-      setLoading(true);
-      setError('');
-      const token = localStorage.getItem('token');
+  useEffect(() => {
+  fetchUsers(); // fetch on load
+}, []);
 
-if (!token) {
-  throw new Error('Authentication required. Please login.');
-}
+const fetchUsers = async (page = 1) => {
+  try {
+    setLoading(true);
+    setError('');
+    const token = localStorage.getItem('token'); // must exist
 
-const response = await fetch(`http://localhost:5000/api/users?page=${page}&limit=${pagination.limit}`, {
-  headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  }
-});
-
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch users');
-      }
-
-      setUsers(data.data);
-      setPagination(data.pagination);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching users:', err);
-    } finally {
-      setLoading(false);
+    if (!token) {
+      throw new Error('Authentication required. Please login.');
     }
-  };
+
+    const response = await fetch(`http://localhost:5000/api/users?page=${page}&limit=${pagination.limit}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      throw new Error(`Unexpected response: ${text}`);
+    }
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch users');
+    }
+
+    setUsers(data.data);
+    setPagination(data.pagination);
+  } catch (err) {
+    setError(err.message);
+    console.error('Error fetching users:', err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchUsers();
@@ -168,6 +189,7 @@ const response = await fetch(`http://localhost:5000/api/users?page=${page}&limit
               <TableHeaderCell>First Name</TableHeaderCell>
               <TableHeaderCell>Last Name</TableHeaderCell>
               <TableHeaderCell>Role</TableHeaderCell>
+              <TableHeaderCell>Verified</TableHeaderCell>
               <TableHeaderCell>Joined Date</TableHeaderCell>
               <TableHeaderCell>Last Updated</TableHeaderCell>
             </TableRow>
@@ -181,13 +203,18 @@ const response = await fetch(`http://localhost:5000/api/users?page=${page}&limit
                   <TableCell>{user.first_name || '-'}</TableCell>
                   <TableCell>{user.last_name || '-'}</TableCell>
                   <RoleCell role={user.role}>{user.role}</RoleCell>
+                  <TableCell>
+                    <VerifiedBadge verified={user.is_verified}>
+                      {user.is_verified ? 'Verified' : 'Pending'}
+                    </VerifiedBadge>
+                  </TableCell>
                   <TableCell>{new Date(user.created_at).toLocaleString()}</TableCell>
                   <TableCell>{new Date(user.updated_at).toLocaleString()}</TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <NoUsersMessage colSpan="7">No users found</NoUsersMessage>
+                <NoUsersMessage colSpan="8">No users found</NoUsersMessage>
               </TableRow>
             )}
           </tbody>

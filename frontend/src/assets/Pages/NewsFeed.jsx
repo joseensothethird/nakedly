@@ -26,7 +26,7 @@ import MessagesFeed from "../Components/Sections/Feeds-Content/MessagesFeed";
 import CollectionsFeed from "../Components/Sections/Feeds-Content/CollectionsFeed";
 import SubscriptionsFeed from "../Components/Sections/Feeds-Content/SubscriptionsFeed";
 import AddCardFeed from "../Components/Sections/Feeds-Content/Add_Card";
-import ProfileFeed from "../Components/Sections/Feeds-Content/ProfileFeed";
+import ProfileFeed from "../Components/Sections/Feeds-Content/ProfileHead";
 import SettingsFeed from "../Components/Sections/Feeds-Content/SettingsFeed";
 
 // Import RightSidebar component
@@ -163,10 +163,7 @@ const SocialMediaApp = () => {
             </NavItem>
           </Nav>
           
-          <NewPostButton>
-            <Plus size={20} />
-            <span>NEW POST</span>
-          </NewPostButton>
+        
         </LeftSidebar>
       )}
 

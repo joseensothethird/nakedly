@@ -1,8 +1,8 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import Navbar from './assets/Components/Header/Navbar';
-import Footer from './assets/Components/Footer/Footer';
-import LazyLoading from './assets/Components/LazyLoading/lazyloading.jsx';
+import Navbar from './assets/Components/Common/Navbar.jsx';
+import Footer from './assets/Components/Common/Footer';
+import LazyLoading from './assets/Components/Common/lazyloading.jsx';
 
 // 1. Force fresh load + minimum loading time
 const lazyWithLoading = (componentImport) => {
@@ -43,12 +43,12 @@ const MessagesFeed = lazyWithLoading(() => import('./assets/Components/Sections/
 const CollectionsFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/CollectionsFeed'));
 const SubscriptionsFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/SubscriptionsFeed'));
 const AddCardFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/Add_Card.jsx'));
-const ProfileFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/ProfileFeed'));
+const ProfileFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/ProfileHead.jsx'));
 const SettingsFeed = lazyWithLoading(() => import('./assets/Components/Sections/Feeds-Content/SettingsFeed'));
 
 const Creator = lazyWithLoading(() => import('./assets/Components/Sections/Channel_Card.jsx'));
 
-const FloatingChatbot = lazyWithLoading(() => import('./assets/Components/ChatBot/Chatbot.jsx'));
+const FloatingChatbot = lazyWithLoading(() => import('./assets/Components/Common/Chatbot.jsx'));
 
 function App() {
   const location = useLocation();
@@ -88,7 +88,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admindashboard" element={<AdminDashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
           {/* Channel Cards */}
           <Route path="/creator" element={<Creator />} />
           {/* Feeds */}
