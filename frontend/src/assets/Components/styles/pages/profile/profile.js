@@ -1,183 +1,288 @@
-// ProfileHeader.styles.js
 import styled from 'styled-components';
-import { CheckCircle } from 'react-feather';
 
-export const ProfileHeaderContainer = styled.div`
+// Main Container
+export const Container = styled.div`
+  width: 100%;
+  max-width: 1000px;
+  background: white;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  color: black;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+`;
+
+// Banner Section
+export const BannerWrapper = styled.div`
   position: relative;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  color: #000; /* Added black text color */
+  height: 250px;
+  background: rgba(152, 152, 152, 0.1);
 `;
 
-export const Banner = styled.div`
-  height: 200px;
-  background: blue;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000; /* Changed to black */
-  font-size: 24px;
-  font-weight: bold;
-`;
-
-export const HeaderContent = styled.div`
-  padding: 20px;
-  color: #000; /* Added black text color */
-`;
-
-export const HeaderTop = styled.div`
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 20px;
-`;
-
-export const AvatarContainer = styled.div`
-  position: relative;
-  margin-right: 20px;
-  margin-top: -50px;
-`;
-
-export const Avatar = styled.img`
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 3px solid white;
+export const Banner = styled.img`
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 `;
 
-export const VerifiedBadge = styled.div`
+export const EditButton = styled.button`
   position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background: white;
-  border-radius: 50%;
-  padding: 2px;
-  color: #ff4b96;
-`;
-
-export const ProfileInfo = styled.div`
-  flex: 1;
-  color: #000; /* Added black text color */
-`;
-
-export const Name = styled.h1`
-  font-size: 24px;
-  margin: 0;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  color: #000; /* Added black text color */
+  gap: 8px;
+  font-size: 14px;
+  color: black;
+  font-weight: 500;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 `;
 
-export const Username = styled.p`
-  color: #000; /* Changed from #666 to black */
-  margin: 5px 0;
-`;
-
-export const StatsContainer = styled.div`
+// Content Layout
+export const Content = styled.div`
   display: flex;
-  margin: 15px 0;
+  flex-direction: row;
+  padding: 24px;
+  gap: 24px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+  }
 `;
 
-export const StatItem = styled.div`
-  margin-right: 20px;
-  text-align: center;
+export const Left = styled.div`
+  flex: 0 0 140px;
+  
+  @media (max-width: 768px) {
+    flex: none;
+    align-self: center;
+  }
 `;
 
-export const StatNumber = styled.div`
-  font-weight: bold;
+export const ProfileImg = styled.img`
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  margin-top: -70px;
+  background: #eee;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  display: block;
+`;
+
+export const Right = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+// Profile Info Section
+export const TopRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+`;
+
+export const NameWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+export const NameContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const FirstName = styled.h1`
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1;
+  color: black;
+`;
+
+export const LastName = styled.h1`
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1;
+  color: black;
+`;
+
+export const Username = styled.span`
   font-size: 18px;
-  color: #000; /* Added black text color */
+  color: #6b7280;
+  margin: 0;
+  display: block;
 `;
 
-export const StatLabel = styled.div`
-  font-size: 12px;
-  color: #000; /* Changed from #666 to black */
+export const ActionButtons = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+export const FollowBtn = styled.button`
+  background-color: ${props => props.isFollowing ? '#f3f4f6' : '#0095f6'};
+  color: ${props => props.isFollowing ? '#374151' : 'white'};
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: ${props => props.isFollowing ? '#e5e7eb' : '#0084d6'};
+  }
+`;
+
+export const SubscribeBtn = styled.button`
+  background-color: #10b981;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: #0d9f6e;
+  }
+`;
+
+// Stats Section
+export const Stats = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  font-size: 14px;
+  color: #6b7280;
+`;
+
+export const Stat = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #6b7280;
+  
+  strong {
+    color: black;
+    font-weight: 600;
+  }
+`;
+
+export const OnlineIndicator = styled.div`
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  margin-right: 4px;
 `;
 
 export const Bio = styled.p`
-  margin: 15px 0;
-  line-height: 1.5;
-  color: #000; /* Added black text color */
+  margin: 0;
+  font-style: italic;
+  color: #374151;
+  line-height: 1.6;
 `;
 
-export const DetailsContainer = styled.div`
+// Details Section
+export const Details = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  font-size: 14px;
+  color: black;
+`;
+
+export const DetailSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export const Detail = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0;
+  
+  strong {
+    font-weight: 600;
+    color: black;
+  }
+  
+  span {
+    color: #6b7280;
+  }
+`;
+
+export const SpecialtiesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export const SpecialtyTags = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin: 15px 0;
-  gap: 15px;
+  gap: 6px;
 `;
 
-export const DetailItem = styled.div`
-  display: flex;
-  align-items: center;
-  color: #000; /* Changed from #666 to black */
-  font-size: 14px;
-  
-  svg {
-    margin-right: 5px;
-    color: #ff4b96;
-  }
-`;
-
-export const SocialLinks = styled.div`
-  display: flex;
-  gap: 15px;
-  margin: 15px 0;
-`;
-
-export const SocialIcon = styled.a`
-  color: #000; /* Changed from #666 to black */
-  font-size: 20px;
-  transition: color 0.3s;
-  
-  &:hover {
-    color: #ff4b96;
-  }
-`;
-
-export const EditButton = styled.button`
-  background: #f0f0f0;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
+export const SpecialtyTag = styled.span`
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 4px 8px;
+  border-radius: 12px;
   font-size: 12px;
-  margin-left: 10px;
+  font-weight: 500;
+`;
+
+export const Links = styled.div`
   display: flex;
-  align-items: center;
-  cursor: pointer;
-  transition: background 0.3s;
-  color: #000; /* Added black text color */
-  
-  &:hover {
-    background: #e0e0e0;
-  }
-  
-  svg {
-    margin-right: 5px;
+  gap: 16px;
+  font-size: 24px;
+
+  a {
+    color: #6b7280;
+    transition: color 0.2s;
+    
+    &:hover {
+      color: #374151;
+    }
   }
 `;
 
-export const SubscribeButton = styled.button`
-  background: #ff4b96;
-  color: #000; /* Changed from white to black */
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-  
-  &:hover {
-    background: #ff2d81;
-  }
-`;
-
-export const ModalOverlay = styled.div`
+// Modal Components
+export const Modal = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -187,151 +292,220 @@ export const ModalOverlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 16px;
   z-index: 1000;
 `;
 
-export const ModalContainer = styled.div`
+export const ModalContent = styled.div`
   background: white;
   border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  color: #000; /* Added black text color */
 `;
 
 export const ModalHeader = styled.div`
-  padding: 15px 20px;
-  border-bottom: 1px solid #eee;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
-  h2 {
-    margin: 0;
-    font-size: 20px;
-    color: #000; /* Added black text color */
-  }
+  margin-bottom: 20px;
+`;
+
+export const ModalTitle = styled.h2`
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+  margin: 0;
 `;
 
 export const CloseButton = styled.button`
   background: none;
   border: none;
-  font-size: 20px;
+  color: #6b7280;
   cursor: pointer;
-  color: #000; /* Changed from #666 to black */
+  padding: 4px;
   
   &:hover {
-    color: #333;
+    color: #374151;
   }
 `;
 
-export const ModalBody = styled.div`
-  padding: 20px;
-`;
-
-export const ModalFooter = styled.div`
-  padding: 15px 20px;
-  border-top: 1px solid #eee;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-`;
-
+// Form Components
 export const FormGroup = styled.div`
-  margin-bottom: 15px;
+  margin-bottom: 16px;
 `;
 
-export const FormLabel = styled.label`
+export const Label = styled.label`
   display: block;
-  margin-bottom: 5px;
+  font-size: 14px;
   font-weight: 500;
-  color: #000; /* Added black text color */
+  color: #374151;
+  margin-bottom: 4px;
 `;
 
-export const FormInput = styled.input`
+export const Input = styled.input`
   width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   font-size: 14px;
-  color: #000; /* Added black text color */
   
   &:focus {
     outline: none;
-    border-color: #ff4b96;
+    border-color: #0095f6;
+    box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.1);
   }
 `;
 
-export const FormTextarea = styled.textarea`
+export const Textarea = styled.textarea`
   width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   font-size: 14px;
-  min-height: 80px;
   resize: vertical;
-  color: #000; /* Added black text color */
   
   &:focus {
     outline: none;
-    border-color: #ff4b96;
+    border-color: #0095f6;
+    box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.1);
   }
 `;
 
-export const SaveButton = styled.button`
-  background: #ff4b96;
-  color: #000; /* Changed from white to black */
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
-  font-weight: bold;
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+`;
+
+export const Button = styled.button`
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.2s;
+  
+  &.primary {
+    background: #0095f6;
+    color: white;
+    border: none;
+    
+    &:hover {
+      background: #0084d6;
+    }
+  }
+  
+  &.secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    
+    &:hover {
+      background: #e5e7eb;
+    }
+  }
+`;
+
+// Subscription Components
+export const SubscriptionPlans = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+`;
+
+export const PlanCard = styled.div`
+  border: 1px solid ${props => props.isSelected ? '#0095f6' : '#d1d5db'};
+  border-radius: 8px;
+  padding: 16px;
+  background: ${props => props.isSelected ? '#f0f9ff' : 'white'};
+  cursor: pointer;
+  transition: all 0.2s;
   
   &:hover {
-    background: #ff2d81;
+    border-color: #0095f6;
   }
 `;
 
-export const CancelButton = styled.button`
-  background: #f0f0f0;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
+export const PlanTitle = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: black;
+`;
+
+export const PlanPrice = styled.div`
+  font-size: 18px;
   font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-  color: #000; /* Added black text color */
-  
-  &:hover {
-    background: #e0e0e0;
+  color: black;
+  margin-bottom: 8px;
+`;
+
+export const PlanDescription = styled.p`
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+`;
+
+export const PaymentMethod = styled.div`
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+`;
+
+export const PaymentOption = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+`;
+
+export const ErrorMessage = styled.div`
+  padding: 20px;
+  background: #ffebee;
+  border-radius: 8px;
+  color: #c62828;
+  margin: 20px 0;
+  text-align: center;
+
+  h3 {
+    margin-top: 0;
+    color: #c62828;
+  }
+
+  p {
+    margin-bottom: 0;
   }
 `;
 
-export const ImagePreviewContainer = styled.div`
-  margin-top: 10px;
+export const LoadingSpinner = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+
+  .spinner {
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+// styles/pages/profile/profile.js
+export const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
-`;
-
-export const ImagePreview = styled.img`
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-`;
-
-export const ImageUploadLabel = styled.label`
-  display: inline-block;
-  padding: 8px 12px;
-  background-color: #f0f0f0;
-  color: #000; /* Changed from #333 to black */
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #e0e0e0;
-  }
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: ${({ theme }) => theme.textSecondary};
 `;
